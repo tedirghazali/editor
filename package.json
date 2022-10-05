@@ -1,0 +1,56 @@
+{
+  "name": "tedir-editor",
+  "version": "0.0.1-wood-0",
+  "description": "Tedir Editor is rich text editor for Vue 3 & Web Components",
+  "main": "dist/vue/tedir-editor-vue.umd.js",
+  "module": "dist/vue/tedir-editor-vue.es.js",
+  "unpkg": "dist/vue/tedir-editor-vue.umd.js",
+  "exports": {
+    ".": {
+      "import": "./dist/vue/tedir-editor-vue.es.js",
+      "require": "./dist/vue/tedir-editor-vue.umd.js"
+    },
+    "./web": {
+      "import": "./dist/web/tedir-editor-web.es.js",
+      "require": "./dist/web/tedir-editor-web.umd.js"
+    },
+    "./css": "./dist/vue/style.css"
+  },
+  "scripts": {
+    "dev-vue": "vite --config vite-vue-config.ts",
+    "build-vue": "vue-tsc --noEmit && vite build --config vite-vue-config.ts",
+    "build-web": "vue-tsc --noEmit && vite build --config vite-web-config.ts",
+    "preview-vue": "vite preview --config vite-vue-config.ts"
+  },
+  "files": [
+    "src/alga/*.alga",
+    "package.alga",
+    "dist"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tedirghazali/editor.git"
+  },
+  "keywords": [
+    "dropzone",
+    "file-upload",
+    "unggah"
+  ],
+  "author": "Tedir Ghazali",
+  "license": "SEE LICENSE IN license.txt",
+  "bugs": {
+    "url": "https://github.com/tedirghazali/editor/issues"
+  },
+  "homepage": "https://github.com/tedirghazali/editor#readme",
+  "dependencies": {
+    "alga-js": "^0.1.0-stone-9",
+    "vue": "^3.2.37"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-vue": "^3.1.0",
+    "alga-css": "^1.0.0-ruby-7",
+    "typescript": "^4.6.4",
+    "vite": "^3.1.0",
+    "vue-tsc": "^0.40.4"
+  }
+}

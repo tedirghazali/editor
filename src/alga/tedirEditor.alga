@@ -1,0 +1,9 @@
+@define refs {
+  name: tedirEditor;
+}
+
+@alga {refs.name} {
+  .{refs.name} {
+    ref: mt-10px mb-10px;
+  }
+}
