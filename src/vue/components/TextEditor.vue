@@ -1,21 +1,36 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, onMounted, onUpdated } from 'vue'
 import { uniqid } from 'alga-js/string'
 
 const props = withDefaults(defineProps<{
   //@ts-ignore
-  modelValue?: string
+  modelValue?: string,
+  height?: string
 }>(), {
   //@ts-ignore
-  modelValue: ''
+  modelValue: '',
+  height: '300px'
 })
 
 const emit = defineEmits<{
   (e: 'update:modelValue', value: string): void
 }>()
 
-const content = ref<string>('')
+const editorContentRef = ref<any>(null)
+const content = ref<string>('<p>This is the first content for tooltip</p>')
+const viewCode = ref<boolean>(false)
 const uniqueId = uniqid()
+
+const selectionHandler = (e) => {
+  const selection = e.target.value.substring(
+    e.target.selectionStart, e.target.selectionEnd
+  )
+  console.log(selection.toString())
+}
+
+const enterHandler = () => {
+  content.value.insertAdjacentHTML("afterend", '<p></p>')
+}
 
 const handleFiles = (e: any) => {
   emit('update:modelValue', content.value)
@@ -31,19 +46,18 @@ const handleFiles = (e: any) => {
           <li class="editorItem active">Underscore</li>
         </ul>
         <ul class="editorMenu">
-          <li class="editorItem">Compose</li>
-          <li class="editorItem">View</li>
+          <li class="editorItem" :class="{active: viewCode === true}" @click="viewCode = true">Compose</li>
+          <li class="editorItem" :class="{active: viewCode === false}" @click="viewCode = false">View</li>
         </ul>
       </div>
-      <div class="editorContent" contenteditable="true">
-        This is the first content for tooltip
-      </div>
+      <textarea v-if="viewCode" class="editorContent" v-model="content" :style="{height}" @select="selectionHandler" @keyup.enter=""></textarea>
+      <div v-else ref="editorContentRef" class="editorContent" contenteditable="true" :style="{height}" v-html="content" @keyup.enter=""></div>
       <div class="editorStatusbar">
         <ul class="editorMenu">
-          <li class="editorItem">p &gt; b</li>
+          <li class="editorItem plain">p &gt; b</li>
         </ul>
         <ul class="editorMenu">
-          <li class="editorItem">Total: 2345 word</li>
+          <li class="editorItem plain">Total: 2345 word</li>
         </ul>
       </div>
     </div>

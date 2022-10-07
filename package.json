@@ -48,7 +48,7 @@
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^3.1.0",
-    "alga-css": "^1.0.0-ruby-7",
+    "alga-css": "^1.0.0-ruby-8",
     "typescript": "^4.6.4",
     "vite": "^3.1.0",
     "vue-tsc": "^0.40.4"
