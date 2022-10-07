@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue'
-import TextEditor from './components/TextEditor.vue'
+import TextEditor from './components/MarkEditor.vue'
 
 const content = ref<string>('')
 

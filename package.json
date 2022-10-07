@@ -43,7 +43,10 @@
   },
   "homepage": "https://github.com/tedirghazali/editor#readme",
   "dependencies": {
+    "@types/marked": "^4.0.7",
     "alga-js": "^0.1.0-stone-9",
+    "marked": "^4.1.1",
+    "turndown": "^7.1.1",
     "vue": "^3.2.37"
   },
   "devDependencies": {
