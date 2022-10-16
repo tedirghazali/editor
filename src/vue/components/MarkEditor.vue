@@ -26,6 +26,9 @@ const emit = defineEmits<{
   (e: 'update:modelValue', value: string): void
 }>()
 
+const toolDefault = ref('')
+//const toolBlocks = ref('')
+//const toolInlines = ref([])
 const editorContentRef = ref<any>(null)
 const htmlContent = ref<string>('<p>This is the first content for tooltip</p>')
 const markdownContent = ref<string>('This is the first content for tooltip')
@@ -47,6 +50,11 @@ watch(markdownContent, () => {
 })
 
 const selectionHandler = (e) => {
+  const textToArray = e.target.value.split('')
+  textToArray.splice(e.target.selectionStart, 0, '***')
+  textToArray.splice(Number(e.target.selectionEnd) + 1, 0, '***')
+  markdownContent.value = textToArray.join('')
+  
   const selection = e.target.value.substring(
     e.target.selectionStart, e.target.selectionEnd
   )
@@ -60,20 +68,28 @@ const enterHandler = () => {
 const handleFiles = (e: any) => {
   emit('update:modelValue', content.value)
 }
+
+/*const addToolInlines = (type) => {
+  if(toolInlines.value.includes(type)) {
+    toolInlines.value = toolInlines.value.filter((item: string) => item !== type)
+  } else {
+    toolInlines.value.push(type)
+  }
+}*/
 </script>
 
 <template>
   <div class="editor editorText">
       <div class="editorToolbar">
         <ul class="editorMenu">
-          <li class="editorItem"><Paragraph /></li>
-          <li class="editorItem"><TypeH1 /></li>
-          <li class="editorItem"><TypeH2 /></li>
-          <li class="editorItem"><TypeH3 /></li>
-          <li class="editorItem"><TypeBold /></li>
-          <li class="editorItem"><TypeItalic /></li>
-          <li class="editorItem"><TypeUnderline /></li>
-          <li class="editorItem"><TypeStrikethrough /></li>
+          <li class="editorItem" :class="toolDefault === 'p' ? 'active' : ''" @click="toolDefault = 'p'"><Paragraph /></li>
+          <li class="editorItem" :class="toolDefault === 'h1' ? 'active' : ''" @click="toolDefault = 'h1'"><TypeH1 /></li>
+          <li class="editorItem" :class="toolDefault === 'h2' ? 'active' : ''" @click="toolDefault = 'h2'"><TypeH2 /></li>
+          <li class="editorItem" :class="toolDefault === 'h3' ? 'active' : ''" @click="toolDefault = 'h3'"><TypeH3 /></li>
+          <li class="editorItem" :class="toolDefault === 'b' ? 'active' : ''" @click="toolDefault = 'b'"><TypeBold /></li>
+          <li class="editorItem" :class="toolDefault === 'i' ? 'active' : ''" @click="toolDefault = 'i'"><TypeItalic /></li>
+          <li class="editorItem" :class="toolDefault === 'u' ? 'active' : ''" @click="toolDefault = 'u'"><TypeUnderline /></li>
+          <li class="editorItem" :class="toolDefault === 's' ? 'active' : ''" @click="toolDefault = 's'"><TypeStrikethrough /></li>
         </ul>
         <ul class="editorMenu">
           <li class="editorItem" :class="{active: viewCode === true}" @click="viewCode = true">Markdown</li>
@@ -87,7 +103,7 @@ const handleFiles = (e: any) => {
           <li class="editorItem plain">Status</li>
         </ul>
         <ul class="editorMenu">
-          <li class="editorItem plain">Total: {{ markdownContent.split(' ').length }} words</li>
+          <li class="editorItem plain">Total: {{ htmlContent.split(' ').length }} words</li>
         </ul>
       </div>
     </div>
