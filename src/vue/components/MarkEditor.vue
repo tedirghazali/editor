@@ -62,7 +62,7 @@ const selectionHandler = (e) => {
 }
 
 const enterHandler = () => {
-  content.value.insertAdjacentHTML("afterend", '<p></p>')
+  htmlContent.value.insertAdjacentHTML("afterend", '<p></p>')
 }
 
 const handleFiles = (e: any) => {
