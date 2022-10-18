@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted, onUpdated } from 'vue'
+import { ref, computed, watch, onMounted, onUpdated } from 'vue'
 import { uniqid } from 'alga-js/string'
 import Paragraph from '../icons/Paragraph.vue'
 import TypeH1 from '../icons/TypeH1.vue'
@@ -12,25 +12,91 @@ import TypeStrikethrough from '../icons/TypeStrikethrough.vue'
 
 const props = withDefaults(defineProps<{
   //@ts-ignore
-  modelValue?: string,
+  modelValue?: any[],
   height?: string
 }>(), {
   //@ts-ignore
-  modelValue: '',
+  modelValue: [],
   height: '300px'
 })
 
 const emit = defineEmits<{
-  (e: 'update:modelValue', value: string): void
+  (e: 'update:modelValue', value: any[]): void
 }>()
 
+const toolBlock = ref<string>('p')
 const toolDefault = ref<string>('')
-//const toolBlocks = ref<string>('')
+//const toolBlock = ref<string>('')
 //const toolInlines = ref<string[]>([])
 const editorContentRef = ref<any>(null)
-const content = ref<string>('<p>This is the first content for tooltip</p>')
-const viewCode = ref<boolean>(false)
+const editorBlockRef = ref<any>(null)
+const content = ref<any[]>(props.modelValue || {})
+const viewCode = ref<string>('text')
 const uniqueId = uniqid()
+
+const contentHTML = computed<string>(() => {
+  return content.value.map((item: any, index: number) => {
+    let newBlock = `<${item.name} id="${item.id}" data-index="${index}">`
+    if(typeof item.children === 'string') {
+      newBlock = newBlock + item.children
+    } else {
+      newBlock = newBlock + childrenHTML(item.children)
+    }
+    return newBlock + `</${item.name}>`
+  }).join('\n')
+})
+
+const childrenHTML = (children) => {
+  let newChildren = ''
+  for(let child of children) {
+    if(child.type === 'inline') {
+      let newInline = `<${child.name} id="${child.id}">`
+      if(typeof child.children === 'string') {
+        newInline = newInline + child.children
+      } else {
+        newInline = newInline + childrenHTML(child.children)
+      }
+      newChildren = newChildren + newInline + `</${child.name} id="${child.id}">`
+    } else {
+      newChildren = newChildren + child.children
+    }
+  }
+  return newChildren
+}
+
+onMounted(() => {
+  if(editorContentRef.value !== null) {
+    const childrenElem = [].slice.call(editorContentRef.value.children)
+    for(let elem of childrenElem) {
+      elem.onclick = () => {
+        editorBlockRef.value = elem
+        console.log(editorBlockRef.value)
+      }
+    }
+  }
+})
+
+onUpdated(() => {
+  if(editorContentRef.value !== null) {
+    const childrenElem = [].slice.call(editorContentRef.value.children)
+    editorBlockRef.value = childrenElem[Number(childrenElem.length) - 1]
+    editorBlockRef.value.focus()
+    let range = editorBlockRef.value.createTextRange();
+    range.collapse(false);
+    range.select();
+    console.log(editorBlockRef.value)
+    for(let elem of childrenElem) {
+      elem.onclick = () => {
+        editorBlockRef.value = elem
+        console.log(editorBlockRef.value)
+      }
+    }
+  }
+})
+
+const changeBlockHandler = () => {
+  
+}
 
 const selectionStart = ref<number>(0)
 const selectionEnd = ref<number>(0)
@@ -38,21 +104,11 @@ const selectionHandler = (e) => {
   toolDefault.value = ''
   selectionStart.value = Number(e.target.selectionStart)
   selectionEnd.value = Number(e.target.selectionEnd)
-
-  /*const textToArray = e.target.value.split('')
-  textToArray.splice(e.target.selectionStart, 0, `<${toolDefault.value}>`)
-  textToArray.splice(Number(e.target.selectionEnd) + 1, 0, `</${toolDefault.value}>`)
-  content.value = textToArray.join('')
-  
-  const selection = e.target.value.substring(
-    e.target.selectionStart, e.target.selectionEnd
-  )
-  console.log(selection.toString())*/
 }
 
 const applyHandler = () => {
   if(selectionStart.value !== 0 || selectionEnd.value !== 0) {
-    const textToArray = content.value.split('')
+    const textToArray = contentHTML.value.split('')
     textToArray.splice(selectionStart.value, 0, `<${toolDefault.value}>`)
     textToArray.splice(Number(selectionEnd.value) + 1, 0, `</${toolDefault.value}>`)
     const ltArr: number[] = []
@@ -91,7 +147,12 @@ const pressHandler = () => {
 }
 
 const enterHandler = () => {
-  content.value = content.value + '\n<p></p>'
+  content.value.splice(Number(editorBlockRef.value.getAttribute('data-index')) + 1, 0, {
+    id: 'block-'+uniqid(content.value.length),
+    type: 'block',
+    name: 'p',
+    children: 'This is the second content for text editor '+uniqid(content.value.length),
+  })
 }
 
 const handleFiles = (e: any) => {
@@ -111,28 +172,30 @@ const handleFiles = (e: any) => {
   <div class="editor editorText">
       <div class="editorToolbar">
         <ul class="editorMenu">
-          <li class="editorItem" :class="toolDefault === 'p' ? 'active' : ''" @click="toolDefault = 'p'; applyHandler();"><Paragraph /></li>
-          <li class="editorItem" :class="toolDefault === 'h1' ? 'active' : ''" @click="toolDefault = 'h1'; applyHandler();"><TypeH1 /></li>
-          <li class="editorItem" :class="toolDefault === 'h2' ? 'active' : ''" @click="toolDefault = 'h2'; applyHandler();"><TypeH2 /></li>
-          <li class="editorItem" :class="toolDefault === 'h3' ? 'active' : ''" @click="toolDefault = 'h3'; applyHandler();"><TypeH3 /></li>
-          <li class="editorItem" :class="toolDefault === 'b' ? 'active' : ''" @click="toolDefault = 'b'; applyHandler();"><TypeBold /></li>
+          <li class="editorItem" :class="toolBlock === 'p' ? 'active' : ''" @click="toolBlock = 'p'; changeBlockHandler();"><Paragraph /></li>
+          <li class="editorItem" :class="toolBlock === 'h1' ? 'active' : ''" @click="toolBlock = 'h1'; changeBlockHandler();"><TypeH1 /></li>
+          <li class="editorItem" :class="toolBlock === 'h2' ? 'active' : ''" @click="toolBlock = 'h2'; changeBlockHandler();"><TypeH2 /></li>
+          <li class="editorItem" :class="toolBlock === 'h3' ? 'active' : ''" @click="toolBlock = 'h3'; changeBlockHandler();"><TypeH3 /></li>
+          <li class="editorItem" :class="toolDefault === 'b' ? 'active' : ''" @click="toolDefault = 'b'; changeBlockHandler();"><TypeBold /></li>
           <li class="editorItem" :class="toolDefault === 'i' ? 'active' : ''" @click="toolDefault = 'i'; applyHandler();"><TypeItalic /></li>
           <li class="editorItem" :class="toolDefault === 'u' ? 'active' : ''" @click="toolDefault = 'u'; applyHandler();"><TypeUnderline /></li>
           <li class="editorItem" :class="toolDefault === 's' ? 'active' : ''" @click="toolDefault = 's'; applyHandler();"><TypeStrikethrough /></li>
         </ul>
         <ul class="editorMenu">
-          <li class="editorItem" :class="{active: viewCode === true}" @click="viewCode = true">Compose</li>
-          <li class="editorItem" :class="{active: viewCode === false}" @click="viewCode = false">View</li>
+          <li class="editorItem" :class="{active: viewCode === 'text'}" @click="viewCode = 'text'">Editor</li>
+          <li class="editorItem" :class="{active: viewCode === 'html'}" @click="viewCode = 'html'">HTML</li>
+          <li class="editorItem" :class="{active: viewCode === 'json'}" @click="viewCode = 'json'">JSON</li>
         </ul>
       </div>
-      <textarea v-if="viewCode" class="editorContent" v-model="content" :style="{height}" @select="selectionHandler" @keyup.enter="enterHandler" @click="pressHandler"></textarea>
-      <div v-else ref="editorContentRef" class="editorContent" contenteditable="true" :style="{height}" v-html="content" @keyup.enter="enterHandler"></div>
+      <textarea v-if="viewCode === 'html'" class="editorContent" :value="contentHTML" :style="{height}" @select="selectionHandler" @keyup.enter="enterHandler" @click="pressHandler" readonly></textarea>
+      <textarea v-else-if="viewCode === 'json'" class="editorContent" :value="JSON.stringify(content, null, 4)" :style="{height}" @select="selectionHandler" @keyup.enter="enterHandler" @click="pressHandler" readonly></textarea>
+      <div v-else ref="editorContentRef" class="editorContent" contenteditable="true" :style="{height}" v-html="contentHTML" @keyup.enter="enterHandler"></div>
       <div class="editorStatusbar">
         <ul class="editorMenu">
           <li class="editorItem plain">Status</li>
         </ul>
         <ul class="editorMenu">
-          <li class="editorItem plain">Total: {{ content.split(' ').length }} words</li>
+          <li class="editorItem plain">Total: {{ String(contentHTML).split(' ').length }} words</li>
         </ul>
       </div>
     </div>
