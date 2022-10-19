@@ -35,28 +35,32 @@ const viewCode = ref<string>('text')
 const uniqueId = uniqid()
 
 const contentHTML = computed<string>(() => {
-  return content.value.map((item: any, index: number) => {
-    let newBlock = `<${item.name} id="${item.id}" data-index="${index}">`
+  let newHTML: string = ''
+  let index: number = 0
+  for(let item of content.value) {
+    let newBlock = `<${item.name} data-id="${item.id}" data-index="${index}">`
     if(typeof item.children === 'string') {
       newBlock = newBlock + item.children
     } else {
       newBlock = newBlock + childrenHTML(item.children)
     }
-    return newBlock + `</${item.name}>`
-  }).join('\n')
+    newHTML = newHTML + newBlock + `</${item.name}>` + '\n'
+    index++
+  }
+  return newHTML
 })
 
 const childrenHTML = (children) => {
   let newChildren = ''
   for(let child of children) {
     if(child.type === 'inline') {
-      let newInline = `<${child.name} id="${child.id}">`
+      let newInline = `<${child.name} data-id="${child.id}">`
       if(typeof child.children === 'string') {
         newInline = newInline + child.children
       } else {
         newInline = newInline + childrenHTML(child.children)
       }
-      newChildren = newChildren + newInline + `</${child.name} id="${child.id}">`
+      newChildren = newChildren + newInline + `</${child.name}>`
     } else {
       newChildren = newChildren + child.children
     }
@@ -70,9 +74,11 @@ onMounted(() => {
     for(let elem of childrenElem) {
       elem.onclick = () => {
         editorBlockRef.value = elem
-        console.log(editorBlockRef.value)
       }
     }
+    /*document.onselectionchange = () => {
+      console.log(document.getSelection())
+    }*/
   }
 })
 
@@ -80,22 +86,88 @@ onUpdated(() => {
   if(editorContentRef.value !== null) {
     const childrenElem = [].slice.call(editorContentRef.value.children)
     editorBlockRef.value = childrenElem[Number(childrenElem.length) - 1]
-    editorBlockRef.value.focus()
-    let range = editorBlockRef.value.createTextRange();
-    range.collapse(false);
-    range.select();
-    console.log(editorBlockRef.value)
     for(let elem of childrenElem) {
       elem.onclick = () => {
         editorBlockRef.value = elem
         console.log(editorBlockRef.value)
       }
     }
+    let sel;
+    editorBlockRef.value.focus();
+    if(document.selection) {
+      sel = document.selection.createRange();
+      sel.moveStart('character', 1);
+      sel.select();
+    } else {
+      sel = window.getSelection();
+      sel.collapse(editorContentRef.value.lastChild, 0)
+    }
   }
 })
 
+const enterHandler = () => {
+  if(Number(content.value.length) === Number(editorBlockRef.value.getAttribute('data-index')) + 1) {
+    content.value.push({
+      id: 'block-'+uniqid(content.value.length),
+      type: 'block',
+      name: 'p',
+      children: '',
+    })
+    console.log(content.value)
+  } else {
+    content.value.splice(Number(editorBlockRef.value.getAttribute('data-index')) + 1, 0, {
+      id: 'block-'+uniqid(content.value.length),
+      type: 'block',
+      name: 'p',
+      children: '',
+    })
+  }
+}
+
+const timer = ref<any>(null)
+const inputHandler = (e) => {
+  const inputElems = [].slice.call(e.target.children)
+  let newContent = inputElems.map((elem: any) => {
+    console.log(elem)
+    return {
+      id: elem.getAttribute('data-id'),
+      type: 'block',
+      name: elem.tagName.toLowerCase(),
+      source: elem.outerHTML,
+      children: inputChildren(elem.childNodes)
+    }
+  })
+  clearTimeout(timer.value)
+  timer.value = setTimeout(() => {
+    content.value = newContent
+  }, 300)
+}
+
+const inputChildren = (childNodes) => {
+  let newChildren = []
+  for(let child of childNodes) {
+    if(child.nodeName === "#text") {
+      newChildren.push({
+        type: 'text',
+        children: child.nodeValue
+      })
+    } else {
+      newChildren.push({
+        id: child.getAttribute('data-id'),
+        type: 'inline',
+        name: child.tagName.toLowerCase(),
+        children: inputChildren(child.childNodes)
+      })
+    }
+  }
+  return newChildren
+}
+
 const changeBlockHandler = () => {
-  
+  if(editorBlockRef.value !== null) {
+    const getIndex = editorBlockRef.value.getAttribute('data-index')
+    content.value[Number(getIndex)].name = toolBlock.value
+  }
 }
 
 const selectionStart = ref<number>(0)
@@ -146,15 +218,6 @@ const pressHandler = () => {
   console.log(selectionStart.value)
 }
 
-const enterHandler = () => {
-  content.value.splice(Number(editorBlockRef.value.getAttribute('data-index')) + 1, 0, {
-    id: 'block-'+uniqid(content.value.length),
-    type: 'block',
-    name: 'p',
-    children: 'This is the second content for text editor '+uniqid(content.value.length),
-  })
-}
-
 const handleFiles = (e: any) => {
   emit('update:modelValue', content.value)
 }
@@ -189,7 +252,7 @@ const handleFiles = (e: any) => {
       </div>
       <textarea v-if="viewCode === 'html'" class="editorContent" :value="contentHTML" :style="{height}" @select="selectionHandler" @keyup.enter="enterHandler" @click="pressHandler" readonly></textarea>
       <textarea v-else-if="viewCode === 'json'" class="editorContent" :value="JSON.stringify(content, null, 4)" :style="{height}" @select="selectionHandler" @keyup.enter="enterHandler" @click="pressHandler" readonly></textarea>
-      <div v-else ref="editorContentRef" class="editorContent" contenteditable="true" :style="{height}" v-html="contentHTML" @keyup.enter="enterHandler"></div>
+      <div v-else ref="editorContentRef" class="editorContent" contenteditable="true" :style="{height}" v-html="contentHTML" @keyup.enter="enterHandler" @input="inputHandler"></div>
       <div class="editorStatusbar">
         <ul class="editorMenu">
           <li class="editorItem plain">Status</li>
