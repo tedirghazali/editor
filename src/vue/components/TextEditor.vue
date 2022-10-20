@@ -13,11 +13,13 @@ import TypeStrikethrough from '../icons/TypeStrikethrough.vue'
 const props = withDefaults(defineProps<{
   //@ts-ignore
   modelValue?: any[],
-  height?: string
+  height?: string,
+  showCode?: boolean
 }>(), {
   //@ts-ignore
   modelValue: [],
-  height: '300px'
+  height: '300px',
+  showCode: false
 })
 
 const emit = defineEmits<{
@@ -25,6 +27,11 @@ const emit = defineEmits<{
 }>()
 
 const toolBlock = ref<string>('p')
+const activeBlock = ref<any>({
+  id: '',
+  tag: '',
+  index: ''
+})
 const toolDefault = ref<string>('')
 //const toolBlock = ref<string>('')
 //const toolInlines = ref<string[]>([])
@@ -38,13 +45,13 @@ const contentHTML = computed<string>(() => {
   let newHTML: string = ''
   let index: number = 0
   for(let item of content.value) {
-    let newBlock = `<${item.name} data-id="${item.id}" data-index="${index}">`
+    let newBlock = `<div data-tag="${item.name}" data-id="${item.id}" data-index="${index}">`
     if(typeof item.children === 'string') {
       newBlock = newBlock + item.children
     } else {
       newBlock = newBlock + childrenHTML(item.children)
     }
-    newHTML = newHTML + newBlock + `</${item.name}>` + '\n'
+    newHTML = newHTML + newBlock + `</div>` + '\n'
     index++
   }
   return newHTML
@@ -54,13 +61,13 @@ const childrenHTML = (children) => {
   let newChildren = ''
   for(let child of children) {
     if(child.type === 'inline') {
-      let newInline = `<${child.name} data-id="${child.id}">`
+      let newInline = `<span data-tag="${child.name}" data-id="${child.id}">`
       if(typeof child.children === 'string') {
         newInline = newInline + child.children
       } else {
         newInline = newInline + childrenHTML(child.children)
       }
-      newChildren = newChildren + newInline + `</${child.name}>`
+      newChildren = newChildren + newInline + `</span>`
     } else {
       newChildren = newChildren + child.children
     }
@@ -232,7 +239,7 @@ const handleFiles = (e: any) => {
 </script>
 
 <template>
-  <div class="editor editorText">
+  <div class="editor editorText tedirEditor">
       <div class="editorToolbar">
         <ul class="editorMenu">
           <li class="editorItem" :class="toolBlock === 'p' ? 'active' : ''" @click="toolBlock = 'p'; changeBlockHandler();"><Paragraph /></li>
@@ -244,15 +251,20 @@ const handleFiles = (e: any) => {
           <li class="editorItem" :class="toolDefault === 'u' ? 'active' : ''" @click="toolDefault = 'u'; applyHandler();"><TypeUnderline /></li>
           <li class="editorItem" :class="toolDefault === 's' ? 'active' : ''" @click="toolDefault = 's'; applyHandler();"><TypeStrikethrough /></li>
         </ul>
-        <ul class="editorMenu">
+        <ul v-if="showCode === true" class="editorMenu">
           <li class="editorItem" :class="{active: viewCode === 'text'}" @click="viewCode = 'text'">Editor</li>
           <li class="editorItem" :class="{active: viewCode === 'html'}" @click="viewCode = 'html'">HTML</li>
           <li class="editorItem" :class="{active: viewCode === 'json'}" @click="viewCode = 'json'">JSON</li>
         </ul>
       </div>
-      <textarea v-if="viewCode === 'html'" class="editorContent" :value="contentHTML" :style="{height}" @select="selectionHandler" @keyup.enter="enterHandler" @click="pressHandler" readonly></textarea>
-      <textarea v-else-if="viewCode === 'json'" class="editorContent" :value="JSON.stringify(content, null, 4)" :style="{height}" @select="selectionHandler" @keyup.enter="enterHandler" @click="pressHandler" readonly></textarea>
-      <div v-else ref="editorContentRef" class="editorContent" contenteditable="true" :style="{height}" v-html="contentHTML" @keyup.enter="enterHandler" @input="inputHandler"></div>
+      <textarea v-if="showCode === true && viewCode === 'html'" class="editorContent" :value="contentHTML" :style="{height}" @select="selectionHandler" @keyup.enter="enterHandler" @click="pressHandler" readonly></textarea>
+      <textarea v-else-if="showCode === true && viewCode === 'json'" class="editorContent" :value="JSON.stringify(content, null, 4)" :style="{height}" @select="selectionHandler" @keyup.enter="enterHandler" @click="pressHandler" readonly></textarea>
+      <div v-else ref="editorContentRef" class="editorContent" contenteditable="true" :style="{height}">
+        <template v-for="(item, index) in content" :key="index">
+          <div :data-tag="item.tag" :data-id="item.id" :data-index="index" v-html="(typeof item.children === 'string') ? item.children : childrenHTML(item.children)" @keyup.enter="enterHandler" @input="inputHandler">
+          </div>
+        </template>
+      </div>
       <div class="editorStatusbar">
         <ul class="editorMenu">
           <li class="editorItem plain">Status</li>

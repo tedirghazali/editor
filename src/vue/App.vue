@@ -46,6 +46,6 @@ watch(content, () => {
 
 <template>
   <div class="container mt-30px mb-30px">
-    <TextEditor v-model="content" />
+    <TextEditor v-model="content" :showCode="true" />
   </div>
 </template>

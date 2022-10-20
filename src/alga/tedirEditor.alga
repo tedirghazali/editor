@@ -4,6 +4,44 @@
 
 @alga {refs.name} {
   .{refs.name} {
-    ref: mt-10px mb-10px;
+    [data-tag=p] {
+      ref: marginTop-0.5rem marginBottom-0.5rem;
+    }
+    
+    [data-tag=h1], 
+    [data-tag=h2], 
+    [data-tag=h3] {
+      ref: marginTop-0.5rem marginBottom-0.5rem fontWeight-bold lineHeight-1.2;
+    }
+    
+    [data-tag=h1] {
+      ref: fontSize-32px;
+    }
+    
+    [data-tag=h2] {
+      ref: fontSize-24px;
+    }
+    
+    [data-tag=h3] {
+      ref: fontSize-16px;
+    }
+    
+    [data-tag=b],
+    [data-tag=strong] {
+	    ref: fontWeight-bolder;
+    }
+    
+    [data-tag=i],
+    [data-tag=em] {
+	    ref: fontStyle-italic;
+    }
+    
+    [data-tag=u] {
+	    ref: textDecoration-underline;
+    }
+    
+    [data-tag=s] {
+	    ref: textDecoration-lineThrough;
+    }
   }
 }
