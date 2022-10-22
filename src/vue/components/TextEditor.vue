@@ -39,43 +39,65 @@ const viewCode = ref<string>('text')
 const uniqueId = uniqid()
 
 const contentHTML = computed<string>(() => {
-  return content.value.replace(/\<(p|h1|h2|h3)\>/g, `<div data-name="$1">`).replace(/\<\/(p|h1|h2|h3)\>/g, '</div>').replace(/\<(b|i|u|s)\>/g, `<span data-name="$1">`).replace(/\<\/(b|i|u|s)\>/g, '</span>')
+   const newHTML = content.value.replace(/\<(p|h1|h2|h3)\>/g, `<div data-name="$1">`).replace(/\<\/(p|h1|h2|h3)\>/g, '</div>').replace(/\<(b|i|u|s)\>/g, `<span data-name="$1">`).replace(/\<\/(b|i|u|s)\>/g, '</span>')
+   return `<!doctype html>
+<html>
+  <head>
+    <style>
+      body { height: 100%; padding: 15px; margin: 0px; }
+      
+      [data-name=p] { margin-top: 0.5rem; margin-bottom: 0.5rem; }
+      
+      [data-name=h1], 
+      [data-name=h2], 
+      [data-name=h3] { margin-top: 0.5rem; margin-bottom: 0.5rem; font-weight: bold; line-height: 1.2; }
+    
+      [data-name=h1] { font-size: 32px; }
+    
+      [data-name=h2] { font-size: 24px; }
+    
+      [data-name=h3] { font-size: 16px; }
+    
+      [data-name=b],
+      [data-name=strong] { font-weight: bolder; }
+    
+      [data-name=i],
+      [data-name=em] { font-style: italic; }
+    
+      [data-name=u] { text-decoration: underline; }
+    
+      [data-name=s] { text-decoration: lineThrough; }
+    </style>
+  </head>
+  <body contenteditable="true">
+    ${newHTML}
+  </body>
+</html>`
 })
 
 onMounted(() => {
   if(editorContentRef.value !== null) {
-    const childrenElem = [].slice.call(editorContentRef.value.children)
+    const doc = editorContentRef.value.contentDocument
+    const childrenElem = [].slice.call(doc.body.children)
     for(let elem of childrenElem) {
       elem.addEventListener('click', clickBlockHandler)
-      elem.addEventListener('selectstart', selectionHandler)
     }
-    selectionHandler()
+    doc.addEventListener('selectionchange', selectionHandler)
   }
 })
 
 onUpdated(() => {
   if(editorContentRef.value !== null) {
-    const childrenElem = [].slice.call(editorContentRef.value.children)
+    const doc = editorContentRef.value.contentDocument
+    const childrenElem = [].slice.call(doc.body.children)
     for(let elem of childrenElem) {
       elem.addEventListener('click', clickBlockHandler)
-      elem.addEventListener('selectstart', selectionHandler)
     }
-    selectionHandler()
-    /*let sel;
-    editorBlockRef.value.focus();
-    if(document.selection) {
-      sel = document.selection.createRange();
-      sel.moveStart('character', 1);
-      sel.select();
-    } else {
-      sel = window.getSelection();
-      sel.collapse(editorContentRef.value.lastChild, 0)
-    }*/
+    doc.addEventListener('selectionchange', selectionHandler)
   }
 })
 
 const clickBlockHandler = (e: any) => {
-  selectionHandler()
   if(e.target.tagName.toLowerCase() === 'div') {
     editorBlockRef.value = e.target
     toolBlock.value = e.target.getAttribute('data-name')
@@ -85,7 +107,6 @@ const clickBlockHandler = (e: any) => {
 const changeBlockHandler = () => {
   if(editorBlockRef.value !== null && editorBlockRef.value.tagName.toLowerCase() === 'div') {
     editorBlockRef.value.setAttribute('data-name', toolBlock.value)
-    inputHandler()
   }
 }
 
@@ -120,12 +141,15 @@ const inputChildren = (childNodes) => {
   return newChildren
 }
 
-const selectionHandler = () => {
+const selectionHandler = (e) => {
   toolDefault.value = ''
-  const sel = document.getSelection()
+  const sel = editorContentRef.value.contentDocument.getSelection()
   if((Number(sel?.anchorOffset || 0) !== 0 && Number(sel?.focusOffset || 0) !== 0) || Number(sel?.anchorOffset || 0) < Number(sel?.focusOffset || 0)) {
     editorSelectionRef.value = sel
   }
+  console.log(editorContentRef.value.contentDocument.getSelection())
+  /*console.log(e.target.selectionStart)
+  console.log(e.target.selectionEnd)*/
 }
 
 const applyHandler = () => {
@@ -143,7 +167,6 @@ const applyHandler = () => {
     const newInlineTag = document.createElement(toolDefault.value)
     range.surroundContents(newInlineTag)*/
     
-    inputHandler()
     if(selectionStart !== 0 || selectionEnd !== 0) {
       const textToArray = editorBlockRef.value.innerHTML.split('')
       textToArray.splice(selectionStart, 0, `<span data-name="${toolDefault.value}">`)
@@ -209,8 +232,8 @@ const pressHandler = () => {
           <li class="editorItem" :class="{active: viewCode === 'html'}" @click="viewCode = 'html'">HTML</li>
         </ul>
       </div>
-      <textarea v-if="showCode === true && viewCode === 'html'" class="editorContent" :value="content" :style="{height}" readonly></textarea>
-      <div v-else ref="editorContentRef" class="editorContent" :style="{height}" contenteditable="true" v-html="contentHTML"></div>
+      <textarea v-if="showCode === true && viewCode === 'html'" class="editorContent" :value="editorContentRef?.contentWindow.document.body.innerHTML" :style="{height}" readonly></textarea>
+      <iframe v-else ref="editorContentRef" src="about:blank" :srcdoc="contentHTML" class="editorContent" :style="{height}"></iframe>
       <div class="editorStatusbar">
         <ul class="editorMenu">
           <li class="editorItem plain">{{ toolBlock }} &gt; Status</li>

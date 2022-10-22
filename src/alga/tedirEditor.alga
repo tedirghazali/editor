@@ -4,6 +4,14 @@
 
 @alga {refs.name} {
   .{refs.name} {
+    iframe.editorContent {
+      ref: p-0px appearance-none bd-none;
+    }
+    
+    li.editorItem {
+      user-select: none;
+    }
+    
     [data-name=p] {
       ref: marginTop-0.5rem marginBottom-0.5rem;
     }
