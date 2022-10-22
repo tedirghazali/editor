@@ -12,94 +12,56 @@ import TypeStrikethrough from '../icons/TypeStrikethrough.vue'
 
 const props = withDefaults(defineProps<{
   //@ts-ignore
-  modelValue?: any[],
+  modelValue?: string,
   height?: string,
   showCode?: boolean
 }>(), {
   //@ts-ignore
-  modelValue: [],
+  modelValue: '<p></p>',
   height: '300px',
   showCode: false
 })
 
 const emit = defineEmits<{
-  (e: 'update:modelValue', value: any[]): void
+  (e: 'update:modelValue', value: string): void
 }>()
 
 const toolBlock = ref<string>('p')
-const activeBlock = ref<any>({
-  id: '',
-  tag: '',
-  index: ''
-})
 const toolDefault = ref<string>('')
-//const toolBlock = ref<string>('')
 //const toolInlines = ref<string[]>([])
+
 const editorContentRef = ref<any>(null)
 const editorBlockRef = ref<any>(null)
-const content = ref<any[]>(props.modelValue || {})
+const editorSelectionRef = ref<any>(null)
+
+const content = ref<string>(props.modelValue || '<p></p>')
 const viewCode = ref<string>('text')
 const uniqueId = uniqid()
 
 const contentHTML = computed<string>(() => {
-  let newHTML: string = ''
-  let index: number = 0
-  for(let item of content.value) {
-    let newBlock = `<div data-tag="${item.name}" data-id="${item.id}" data-index="${index}">`
-    if(typeof item.children === 'string') {
-      newBlock = newBlock + item.children
-    } else {
-      newBlock = newBlock + childrenHTML(item.children)
-    }
-    newHTML = newHTML + newBlock + `</div>` + '\n'
-    index++
-  }
-  return newHTML
+  return content.value.replace(/\<(p|h1|h2|h3)\>/g, `<div data-name="$1">`).replace(/\<\/(p|h1|h2|h3)\>/g, '</div>').replace(/\<(b|i|u|s)\>/g, `<span data-name="$1">`).replace(/\<\/(b|i|u|s)\>/g, '</span>')
 })
-
-const childrenHTML = (children) => {
-  let newChildren = ''
-  for(let child of children) {
-    if(child.type === 'inline') {
-      let newInline = `<span data-tag="${child.name}" data-id="${child.id}">`
-      if(typeof child.children === 'string') {
-        newInline = newInline + child.children
-      } else {
-        newInline = newInline + childrenHTML(child.children)
-      }
-      newChildren = newChildren + newInline + `</span>`
-    } else {
-      newChildren = newChildren + child.children
-    }
-  }
-  return newChildren
-}
 
 onMounted(() => {
   if(editorContentRef.value !== null) {
     const childrenElem = [].slice.call(editorContentRef.value.children)
     for(let elem of childrenElem) {
-      elem.onclick = () => {
-        editorBlockRef.value = elem
-      }
+      elem.addEventListener('click', clickBlockHandler)
+      elem.addEventListener('selectstart', selectionHandler)
     }
-    /*document.onselectionchange = () => {
-      console.log(document.getSelection())
-    }*/
+    selectionHandler()
   }
 })
 
 onUpdated(() => {
   if(editorContentRef.value !== null) {
     const childrenElem = [].slice.call(editorContentRef.value.children)
-    editorBlockRef.value = childrenElem[Number(childrenElem.length) - 1]
     for(let elem of childrenElem) {
-      elem.onclick = () => {
-        editorBlockRef.value = elem
-        console.log(editorBlockRef.value)
-      }
+      elem.addEventListener('click', clickBlockHandler)
+      elem.addEventListener('selectstart', selectionHandler)
     }
-    let sel;
+    selectionHandler()
+    /*let sel;
     editorBlockRef.value.focus();
     if(document.selection) {
       sel = document.selection.createRange();
@@ -108,125 +70,116 @@ onUpdated(() => {
     } else {
       sel = window.getSelection();
       sel.collapse(editorContentRef.value.lastChild, 0)
-    }
+    }*/
   }
 })
 
-const enterHandler = () => {
-  if(Number(content.value.length) === Number(editorBlockRef.value.getAttribute('data-index')) + 1) {
-    content.value.push({
-      id: 'block-'+uniqid(content.value.length),
-      type: 'block',
-      name: 'p',
-      children: '',
-    })
-    console.log(content.value)
-  } else {
-    content.value.splice(Number(editorBlockRef.value.getAttribute('data-index')) + 1, 0, {
-      id: 'block-'+uniqid(content.value.length),
-      type: 'block',
-      name: 'p',
-      children: '',
-    })
+const clickBlockHandler = (e: any) => {
+  selectionHandler()
+  if(e.target.tagName.toLowerCase() === 'div') {
+    editorBlockRef.value = e.target
+    toolBlock.value = e.target.getAttribute('data-name')
+  }
+}
+
+const changeBlockHandler = () => {
+  if(editorBlockRef.value !== null && editorBlockRef.value.tagName.toLowerCase() === 'div') {
+    editorBlockRef.value.setAttribute('data-name', toolBlock.value)
+    inputHandler()
   }
 }
 
 const timer = ref<any>(null)
-const inputHandler = (e) => {
-  const inputElems = [].slice.call(e.target.children)
-  let newContent = inputElems.map((elem: any) => {
-    console.log(elem)
-    return {
-      id: elem.getAttribute('data-id'),
-      type: 'block',
-      name: elem.tagName.toLowerCase(),
-      source: elem.outerHTML,
-      children: inputChildren(elem.childNodes)
-    }
-  })
+const inputHandler = () => {
   clearTimeout(timer.value)
   timer.value = setTimeout(() => {
-    content.value = newContent
+    if(editorContentRef.value !== null) {
+      const inputElems = [].slice.call(editorContentRef.value.children)
+      let newContent = inputElems.map((elem: any) => {
+        const newTag = elem.getAttribute('data-name')
+        return `<${newTag}>${inputChildren(elem.childNodes)}</${newTag}>`
+      })
+      content.value = newContent.join('\n').replaceAll('<null></null>', '')
+      emit('update:modelValue', content.value)
+    }
   }, 300)
 }
 
 const inputChildren = (childNodes) => {
-  let newChildren = []
+  let newChildren = ''
   for(let child of childNodes) {
     if(child.nodeName === "#text") {
-      newChildren.push({
-        type: 'text',
-        children: child.nodeValue
-      })
+      newChildren = newChildren + child.nodeValue
     } else {
-      newChildren.push({
-        id: child.getAttribute('data-id'),
-        type: 'inline',
-        name: child.tagName.toLowerCase(),
-        children: inputChildren(child.childNodes)
-      })
+      if(child.childNodes) {
+        const newTag = child.getAttribute('data-name')
+        newChildren = newChildren + `<${newTag}>${inputChildren(child.childNodes)}</${newTag}>`
+      }
     }
   }
   return newChildren
 }
 
-const changeBlockHandler = () => {
-  if(editorBlockRef.value !== null) {
-    const getIndex = editorBlockRef.value.getAttribute('data-index')
-    content.value[Number(getIndex)].name = toolBlock.value
+const selectionHandler = () => {
+  toolDefault.value = ''
+  const sel = document.getSelection()
+  if((Number(sel?.anchorOffset || 0) !== 0 && Number(sel?.focusOffset || 0) !== 0) || Number(sel?.anchorOffset || 0) < Number(sel?.focusOffset || 0)) {
+    editorSelectionRef.value = sel
   }
 }
 
-const selectionStart = ref<number>(0)
-const selectionEnd = ref<number>(0)
-const selectionHandler = (e) => {
-  toolDefault.value = ''
-  selectionStart.value = Number(e.target.selectionStart)
-  selectionEnd.value = Number(e.target.selectionEnd)
-}
-
 const applyHandler = () => {
-  if(selectionStart.value !== 0 || selectionEnd.value !== 0) {
-    const textToArray = contentHTML.value.split('')
-    textToArray.splice(selectionStart.value, 0, `<${toolDefault.value}>`)
-    textToArray.splice(Number(selectionEnd.value) + 1, 0, `</${toolDefault.value}>`)
-    const ltArr: number[] = []
-    const gtArr: number[] = []
-    let totalTag: number = 1
-    for(let i: number = Number(selectionStart.value) + 1; i < (Number(selectionEnd.value) + 1); i++) {
-      if(textToArray[i] === '<') {
-        ltArr.push(i)
-        totalTag++
-      } else if(textToArray[i] === '>') {
-        gtArr.push(Number(i) + 1)
+  if(editorSelectionRef.value !== null) {
+    let selectionStart = editorSelectionRef.value.anchorOffset
+    let selectionEnd = editorSelectionRef.value.focusOffset
+    console.log(selectionStart)
+    console.log(selectionEnd)
+    //console.log(editorSelectionRef.value.anchorNode.data)
+  
+    /*const range = document.createRange()
+    range.setStart(editorBlockRef.value, selectionStart)
+    range.setEnd(editorBlockRef.value, selectionEnd)
+    
+    const newInlineTag = document.createElement(toolDefault.value)
+    range.surroundContents(newInlineTag)*/
+    
+    inputHandler()
+    if(selectionStart !== 0 || selectionEnd !== 0) {
+      const textToArray = editorBlockRef.value.innerHTML.split('')
+      textToArray.splice(selectionStart, 0, `<span data-name="${toolDefault.value}">`)
+      textToArray.splice(Number(selectionEnd) + 1, 0, `</span>`)
+      const ltArr: number[] = []
+      const gtArr: number[] = []
+      let totalTag: number = 1
+      for(let i: number = Number(selectionStart) + 1; i < (Number(selectionEnd) + 1); i++) {
+        if(textToArray[i] === '<') {
+          ltArr.push(i)
+          totalTag++
+        } else if(textToArray[i] === '>') {
+          gtArr.push(Number(i) + 1)
+        }
       }
+      let index: number = 0
+      for(let j: number = 0; j < totalTag; j++) {
+        const ltNum = Number(ltArr[j]) + Number(index)
+        const gtNum = Number(gtArr[j]) + Number(index)
+        if(textToArray[ltNum] === '<') {
+          textToArray.splice(ltNum, 0, `</span>`)
+        }
+        if(textToArray[gtNum] === '>') {
+          textToArray.splice(Number(gtNum) + 1, 0, `<span data-name="${toolDefault.value}">`)
+        }
+        index = index + 2
+      }
+      editorBlockRef.value.innerHTML = textToArray.join('').replace(`<span data-name="${toolDefault.value}"></span>`, '')
     }
-    let index: number = 0
-    for(let j: number = 0; j < totalTag; j++) {
-      const ltNum = Number(ltArr[j]) + Number(index)
-      const gtNum = Number(gtArr[j]) + Number(index)
-      if(textToArray[ltNum] === '<') {
-        textToArray.splice(ltNum, 0, `</${toolDefault.value}>`)
-      }
-      if(textToArray[gtNum] === '>') {
-        textToArray.splice(Number(gtNum) + 1, 0, `<${toolDefault.value}>`)
-      }
-      index = index + 2
-    }
-    content.value = textToArray.join('').replace(`<${toolDefault.value}></${toolDefault.value}>`, '')
-    selectionStart.value = 0
-    selectionEnd.value = 0
   }
 }
 
 const pressHandler = () => {
-  selectionStart.value = 0
-  selectionEnd.value = 0
-  console.log(selectionStart.value)
-}
-
-const handleFiles = (e: any) => {
-  emit('update:modelValue', content.value)
+  selectionStart = 0
+  selectionEnd = 0
+  console.log(selectionStart)
 }
 
 /*const addToolInlines = (type) => {
@@ -246,7 +199,7 @@ const handleFiles = (e: any) => {
           <li class="editorItem" :class="toolBlock === 'h1' ? 'active' : ''" @click="toolBlock = 'h1'; changeBlockHandler();"><TypeH1 /></li>
           <li class="editorItem" :class="toolBlock === 'h2' ? 'active' : ''" @click="toolBlock = 'h2'; changeBlockHandler();"><TypeH2 /></li>
           <li class="editorItem" :class="toolBlock === 'h3' ? 'active' : ''" @click="toolBlock = 'h3'; changeBlockHandler();"><TypeH3 /></li>
-          <li class="editorItem" :class="toolDefault === 'b' ? 'active' : ''" @click="toolDefault = 'b'; changeBlockHandler();"><TypeBold /></li>
+          <li class="editorItem" :class="toolDefault === 'b' ? 'active' : ''" @click="toolDefault = 'b'; applyHandler();"><TypeBold /></li>
           <li class="editorItem" :class="toolDefault === 'i' ? 'active' : ''" @click="toolDefault = 'i'; applyHandler();"><TypeItalic /></li>
           <li class="editorItem" :class="toolDefault === 'u' ? 'active' : ''" @click="toolDefault = 'u'; applyHandler();"><TypeUnderline /></li>
           <li class="editorItem" :class="toolDefault === 's' ? 'active' : ''" @click="toolDefault = 's'; applyHandler();"><TypeStrikethrough /></li>
@@ -254,23 +207,16 @@ const handleFiles = (e: any) => {
         <ul v-if="showCode === true" class="editorMenu">
           <li class="editorItem" :class="{active: viewCode === 'text'}" @click="viewCode = 'text'">Editor</li>
           <li class="editorItem" :class="{active: viewCode === 'html'}" @click="viewCode = 'html'">HTML</li>
-          <li class="editorItem" :class="{active: viewCode === 'json'}" @click="viewCode = 'json'">JSON</li>
         </ul>
       </div>
-      <textarea v-if="showCode === true && viewCode === 'html'" class="editorContent" :value="contentHTML" :style="{height}" @select="selectionHandler" @keyup.enter="enterHandler" @click="pressHandler" readonly></textarea>
-      <textarea v-else-if="showCode === true && viewCode === 'json'" class="editorContent" :value="JSON.stringify(content, null, 4)" :style="{height}" @select="selectionHandler" @keyup.enter="enterHandler" @click="pressHandler" readonly></textarea>
-      <div v-else ref="editorContentRef" class="editorContent" contenteditable="true" :style="{height}">
-        <template v-for="(item, index) in content" :key="index">
-          <div :data-tag="item.tag" :data-id="item.id" :data-index="index" v-html="(typeof item.children === 'string') ? item.children : childrenHTML(item.children)" @keyup.enter="enterHandler" @input="inputHandler">
-          </div>
-        </template>
-      </div>
+      <textarea v-if="showCode === true && viewCode === 'html'" class="editorContent" :value="content" :style="{height}" readonly></textarea>
+      <div v-else ref="editorContentRef" class="editorContent" :style="{height}" contenteditable="true" v-html="contentHTML"></div>
       <div class="editorStatusbar">
         <ul class="editorMenu">
-          <li class="editorItem plain">Status</li>
+          <li class="editorItem plain">{{ toolBlock }} &gt; Status</li>
         </ul>
         <ul class="editorMenu">
-          <li class="editorItem plain">Total: {{ String(contentHTML).split(' ').length }} words</li>
+          <li class="editorItem plain">Total: {{ String(content).split(' ').length }} words</li>
         </ul>
       </div>
     </div>

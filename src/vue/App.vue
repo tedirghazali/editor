@@ -3,7 +3,8 @@ import { ref, watch } from 'vue'
 import { uniqid } from 'alga-js/string'
 import TextEditor from './components/TextEditor.vue'
 
-const content = ref<any[]>([
+const content = ref<string>('<p>This is <b>the <u>first content</u></b> for tooltip</p>')
+/*const content = ref<any[]>([
   {
     id: 'block-'+uniqid(0),
     type: 'block',
@@ -37,7 +38,7 @@ const content = ref<any[]>([
       }
     ]
   }
-])
+])*/
 
 watch(content, () => {
   console.log(content.value)
