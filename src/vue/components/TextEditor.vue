@@ -39,34 +39,34 @@ const viewCode = ref<string>('text')
 const uniqueId = uniqid()
 
 const contentHTML = computed<string>(() => {
-   const newHTML = content.value.replace(/\<(p|h1|h2|h3)\>/g, `<div data-name="$1">`).replace(/\<\/(p|h1|h2|h3)\>/g, '</div>').replace(/\<(b|i|u|s)\>/g, `<span data-name="$1">`).replace(/\<\/(b|i|u|s)\>/g, '</span>')
+   const newHTML = content.value.replace(/\<(p|h1|h2|h3)\>/g, `<div data-tag="$1">`).replace(/\<\/(p|h1|h2|h3)\>/g, '</div>').replace(/\<(b|i|u|s)\>/g, `<span data-tag="$1">`).replace(/\<\/(b|i|u|s)\>/g, '</span>')
    return `<!doctype html>
 <html>
   <head>
     <style>
       body { height: 100%; padding: 15px; margin: 0px; }
       
-      [data-name=p] { margin-top: 0.5rem; margin-bottom: 0.5rem; }
+      [data-tag=p] { margin-top: 0.5rem; margin-bottom: 0.5rem; }
       
-      [data-name=h1], 
-      [data-name=h2], 
-      [data-name=h3] { margin-top: 0.5rem; margin-bottom: 0.5rem; font-weight: bold; line-height: 1.2; }
+      [data-tag=h1], 
+      [data-tag=h2], 
+      [data-tag=h3] { margin-top: 0.5rem; margin-bottom: 0.5rem; font-weight: bold; line-height: 1.2; }
     
-      [data-name=h1] { font-size: 32px; }
+      [data-tag=h1] { font-size: 32px; }
     
-      [data-name=h2] { font-size: 24px; }
+      [data-tag=h2] { font-size: 24px; }
     
-      [data-name=h3] { font-size: 16px; }
+      [data-tag=h3] { font-size: 16px; }
     
-      [data-name=b],
-      [data-name=strong] { font-weight: bolder; }
+      [data-tag=b],
+      [data-tag=strong] { font-weight: bolder; }
     
-      [data-name=i],
-      [data-name=em] { font-style: italic; }
+      [data-tag=i],
+      [data-tag=em] { font-style: italic; }
     
-      [data-name=u] { text-decoration: underline; }
+      [data-tag=u] { text-decoration: underline; }
     
-      [data-name=s] { text-decoration: lineThrough; }
+      [data-tag=s] { text-decoration: line-through; }
     </style>
   </head>
   <body contenteditable="true">
@@ -77,8 +77,8 @@ const contentHTML = computed<string>(() => {
 
 onMounted(() => {
   if(editorContentRef.value !== null) {
-    const doc = editorContentRef.value.contentDocument
-    const childrenElem = [].slice.call(doc.body.children)
+    const doc: any = editorContentRef.value.contentDocument
+    const childrenElem: any[] = [].slice.call(doc.body.children)
     for(let elem of childrenElem) {
       elem.addEventListener('click', clickBlockHandler)
     }
@@ -88,8 +88,8 @@ onMounted(() => {
 
 onUpdated(() => {
   if(editorContentRef.value !== null) {
-    const doc = editorContentRef.value.contentDocument
-    const childrenElem = [].slice.call(doc.body.children)
+    const doc: any = editorContentRef.value.contentDocument
+    const childrenElem: any[] = [].slice.call(doc.body.children)
     for(let elem of childrenElem) {
       elem.addEventListener('click', clickBlockHandler)
     }
@@ -100,13 +100,15 @@ onUpdated(() => {
 const clickBlockHandler = (e: any) => {
   if(e.target.tagName.toLowerCase() === 'div') {
     editorBlockRef.value = e.target
-    toolBlock.value = e.target.getAttribute('data-name')
+    toolBlock.value = e.target.getAttribute('data-tag')
   }
 }
 
 const changeBlockHandler = () => {
   if(editorBlockRef.value !== null && editorBlockRef.value.tagName.toLowerCase() === 'div') {
-    editorBlockRef.value.setAttribute('data-name', toolBlock.value)
+    editorBlockRef.value.setAttribute('data-tag', toolBlock.value)
+    
+    inputHandler()
   }
 }
 
@@ -115,25 +117,25 @@ const inputHandler = () => {
   clearTimeout(timer.value)
   timer.value = setTimeout(() => {
     if(editorContentRef.value !== null) {
-      const inputElems = [].slice.call(editorContentRef.value.children)
+      const inputElems = [].slice.call(editorContentRef.value.contentDocument.body.children)
       let newContent = inputElems.map((elem: any) => {
-        const newTag = elem.getAttribute('data-name')
+        const newTag = elem.getAttribute('data-tag')
         return `<${newTag}>${inputChildren(elem.childNodes)}</${newTag}>`
       })
-      content.value = newContent.join('\n').replaceAll('<null></null>', '')
-      emit('update:modelValue', content.value)
+      const emitContent = newContent.join('\n').replaceAll('<null></null>', '')
+      emit('update:modelValue', emitContent)
     }
   }, 300)
 }
 
-const inputChildren = (childNodes) => {
+const inputChildren = (childNodes: any[]) => {
   let newChildren = ''
   for(let child of childNodes) {
     if(child.nodeName === "#text") {
       newChildren = newChildren + child.nodeValue
     } else {
       if(child.childNodes) {
-        const newTag = child.getAttribute('data-name')
+        const newTag = child.getAttribute('data-tag')
         newChildren = newChildren + `<${newTag}>${inputChildren(child.childNodes)}</${newTag}>`
       }
     }
@@ -141,77 +143,30 @@ const inputChildren = (childNodes) => {
   return newChildren
 }
 
-const selectionHandler = (e) => {
+const selectionHandler = (e: any) => {
   toolDefault.value = ''
   const sel = editorContentRef.value.contentDocument.getSelection()
   if((Number(sel?.anchorOffset || 0) !== 0 && Number(sel?.focusOffset || 0) !== 0) || Number(sel?.anchorOffset || 0) < Number(sel?.focusOffset || 0)) {
     editorSelectionRef.value = sel
   }
-  console.log(editorContentRef.value.contentDocument.getSelection())
-  /*console.log(e.target.selectionStart)
-  console.log(e.target.selectionEnd)*/
 }
 
 const applyHandler = () => {
   if(editorSelectionRef.value !== null) {
-    let selectionStart = editorSelectionRef.value.anchorOffset
-    let selectionEnd = editorSelectionRef.value.focusOffset
-    console.log(selectionStart)
-    console.log(selectionEnd)
-    //console.log(editorSelectionRef.value.anchorNode.data)
+    //let selectionStart = editorSelectionRef.value.anchorOffset
+    //let selectionEnd = editorSelectionRef.value.focusOffset
+    //console.log(selectionStart)
+    //console.log(selectionEnd)
+    //console.log(editorBlockRef.value)
   
-    /*const range = document.createRange()
-    range.setStart(editorBlockRef.value, selectionStart)
-    range.setEnd(editorBlockRef.value, selectionEnd)
+    const range = editorSelectionRef.value.getRangeAt(0)
+    const newInlineTag = editorContentRef.value.contentDocument.createElement('span')
+    newInlineTag.setAttribute('data-tag', toolDefault.value)
+    range.surroundContents(newInlineTag)
     
-    const newInlineTag = document.createElement(toolDefault.value)
-    range.surroundContents(newInlineTag)*/
-    
-    if(selectionStart !== 0 || selectionEnd !== 0) {
-      const textToArray = editorBlockRef.value.innerHTML.split('')
-      textToArray.splice(selectionStart, 0, `<span data-name="${toolDefault.value}">`)
-      textToArray.splice(Number(selectionEnd) + 1, 0, `</span>`)
-      const ltArr: number[] = []
-      const gtArr: number[] = []
-      let totalTag: number = 1
-      for(let i: number = Number(selectionStart) + 1; i < (Number(selectionEnd) + 1); i++) {
-        if(textToArray[i] === '<') {
-          ltArr.push(i)
-          totalTag++
-        } else if(textToArray[i] === '>') {
-          gtArr.push(Number(i) + 1)
-        }
-      }
-      let index: number = 0
-      for(let j: number = 0; j < totalTag; j++) {
-        const ltNum = Number(ltArr[j]) + Number(index)
-        const gtNum = Number(gtArr[j]) + Number(index)
-        if(textToArray[ltNum] === '<') {
-          textToArray.splice(ltNum, 0, `</span>`)
-        }
-        if(textToArray[gtNum] === '>') {
-          textToArray.splice(Number(gtNum) + 1, 0, `<span data-name="${toolDefault.value}">`)
-        }
-        index = index + 2
-      }
-      editorBlockRef.value.innerHTML = textToArray.join('').replace(`<span data-name="${toolDefault.value}"></span>`, '')
-    }
+    inputHandler()
   }
 }
-
-const pressHandler = () => {
-  selectionStart = 0
-  selectionEnd = 0
-  console.log(selectionStart)
-}
-
-/*const addToolInlines = (type) => {
-  if(toolInlines.value.includes(type)) {
-    toolInlines.value = toolInlines.value.filter((item: string) => item !== type)
-  } else {
-    toolInlines.value.push(type)
-  }
-}*/
 </script>
 
 <template>

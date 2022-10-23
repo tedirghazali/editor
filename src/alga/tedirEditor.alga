@@ -12,43 +12,43 @@
       user-select: none;
     }
     
-    [data-name=p] {
+    [data-tag=p] {
       ref: marginTop-0.5rem marginBottom-0.5rem;
     }
     
-    [data-name=h1], 
-    [data-name=h2], 
-    [data-name=h3] {
+    [data-tag=h1], 
+    [data-tag=h2], 
+    [data-tag=h3] {
       ref: marginTop-0.5rem marginBottom-0.5rem fontWeight-bold lineHeight-1.2;
     }
     
-    [data-name=h1] {
+    [data-tag=h1] {
       ref: fontSize-32px;
     }
     
-    [data-name=h2] {
+    [data-tag=h2] {
       ref: fontSize-24px;
     }
     
-    [data-name=h3] {
+    [data-tag=h3] {
       ref: fontSize-16px;
     }
     
-    [data-name=b],
-    [data-name=strong] {
+    [data-tag=b],
+    [data-tag=strong] {
 	    ref: fontWeight-bolder;
     }
     
-    [data-name=i],
-    [data-name=em] {
+    [data-tag=i],
+    [data-tag=em] {
 	    ref: fontStyle-italic;
     }
     
-    [data-name=u] {
+    [data-tag=u] {
 	    ref: textDecoration-underline;
     }
     
-    [data-name=s] {
+    [data-tag=s] {
 	    ref: textDecoration-lineThrough;
     }
   }
