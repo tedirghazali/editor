@@ -26,12 +26,13 @@ const emit = defineEmits<{
   (e: 'update:modelValue', value: string): void
 }>()
 
-const toolBlock = ref<string>('p')
+const toolBlock = ref<string>('')
 const toolDefault = ref<string>('')
-//const toolInlines = ref<string[]>([])
+const toolInlines = ref<string[]>([])
 
 const editorContentRef = ref<any>(null)
 const editorBlockRef = ref<any>(null)
+const editorInlineRef = ref<any>(null)
 const editorSelectionRef = ref<any>(null)
 
 const content = ref<string>(props.modelValue || '<p></p>')
@@ -76,31 +77,54 @@ const contentHTML = computed<string>(() => {
 })
 
 onMounted(() => {
-  if(editorContentRef.value !== null) {
-    const doc: any = editorContentRef.value.contentDocument
-    const childrenElem: any[] = [].slice.call(doc.body.children)
-    for(let elem of childrenElem) {
-      elem.addEventListener('click', clickBlockHandler)
+  setTimeout(() => {
+    if(editorContentRef.value !== null) {
+      const doc: any = editorContentRef.value.contentDocument
+      const childrenElem: any[] = [].slice.call(doc.body.children)
+      for(let elem of childrenElem) {
+        elem.addEventListener('click', (e: any) => {
+          e.preventDefault()
+          //e.stopPropagation()
+          clickBlockHandler(e.target)
+          clickInlineHandler(elem.children)
+        })
+      }
+      doc.addEventListener('selectionchange', selectionHandler)
     }
-    doc.addEventListener('selectionchange', selectionHandler)
-  }
+  }, 200)
 })
 
 onUpdated(() => {
-  if(editorContentRef.value !== null) {
-    const doc: any = editorContentRef.value.contentDocument
-    const childrenElem: any[] = [].slice.call(doc.body.children)
-    for(let elem of childrenElem) {
-      elem.addEventListener('click', clickBlockHandler)
+  setTimeout(() => {
+    if(editorContentRef.value !== null) {
+      const doc: any = editorContentRef.value.contentDocument
+      const childrenElem: any[] = [].slice.call(doc.body.children)
+      for(let elem of childrenElem) {
+        elem.addEventListener('click', (e: any) => {
+          e.preventDefault()
+          //e.stopPropagation()
+          clickBlockHandler(e.target)
+          clickInlineHandler(elem.children)
+        })
+      }
+      doc.addEventListener('selectionchange', selectionHandler)
     }
-    doc.addEventListener('selectionchange', selectionHandler)
-  }
+  }, 200)
 })
 
-const clickBlockHandler = (e: any) => {
-  if(e.target.tagName.toLowerCase() === 'div') {
-    editorBlockRef.value = e.target
-    toolBlock.value = e.target.getAttribute('data-tag')
+watch(viewCode, () => {
+  content.value = props.modelValue
+})
+
+watch(content, () => {
+  inputHandler()
+})
+
+const clickBlockHandler = (target: any) => {
+  if(target?.tagName.toLowerCase() === 'div') {
+    editorBlockRef.value = target
+    toolBlock.value = target.getAttribute('data-tag')
+    toolInlines.value = []
   }
 }
 
@@ -109,6 +133,27 @@ const changeBlockHandler = () => {
     editorBlockRef.value.setAttribute('data-tag', toolBlock.value)
     
     inputHandler()
+  }
+}
+
+const clickInlineHandler = (children: any | any[]) => {
+  const childrenInline: any[] = [].slice.call(children)
+  for(let elem of childrenInline) {
+    elem.addEventListener('click', (e: any) => {
+      e.preventDefault()
+      e.stopPropagation()
+      toolInlines.value = []
+      parentInlineHandler(e.target.parentElement)
+      toolInlines.value.push(e.target.getAttribute('data-tag'))
+      editorInlineRef.value = e.target
+      clickInlineHandler(elem.children)
+    })
+  }
+}
+
+const parentInlineHandler = (parent: any) => {
+  if(parent.tagName.toLowerCase() !== 'div') {
+    toolInlines.value.unshift(parent.getAttribute('data-tag'))
   }
 }
 
@@ -136,7 +181,11 @@ const inputChildren = (childNodes: any[]) => {
     } else {
       if(child.childNodes) {
         const newTag = child.getAttribute('data-tag')
-        newChildren = newChildren + `<${newTag}>${inputChildren(child.childNodes)}</${newTag}>`
+        if(newTag === 'span') {
+          newChildren = newChildren + inputChildren(child.childNodes)
+        } else {
+          newChildren = newChildren + `<${newTag}>${inputChildren(child.childNodes)}</${newTag}>`
+        }
       }
     }
   }
@@ -153,18 +202,29 @@ const selectionHandler = (e: any) => {
 
 const applyHandler = () => {
   if(editorSelectionRef.value !== null) {
-    //let selectionStart = editorSelectionRef.value.anchorOffset
-    //let selectionEnd = editorSelectionRef.value.focusOffset
-    //console.log(selectionStart)
-    //console.log(selectionEnd)
-    //console.log(editorBlockRef.value)
-  
     const range = editorSelectionRef.value.getRangeAt(0)
-    const newInlineTag = editorContentRef.value.contentDocument.createElement('span')
-    newInlineTag.setAttribute('data-tag', toolDefault.value)
-    range.surroundContents(newInlineTag)
+    if(range.toString().length >= 2) {
+      const newInlineTag = editorContentRef.value.contentDocument.createElement('span')
+      newInlineTag.setAttribute('data-tag', toolDefault.value)
+      range.surroundContents(newInlineTag)
+    } else {
+      if(editorInlineRef.value !== null) {
+        if(editorInlineRef.value.getAttribute('data-tag') === 'span') {
+          applyParentInlineHandler(editorInlineRef.value.parentElement)
+        } else {
+          editorInlineRef.value.setAttribute('data-tag', 'span')
+        }
+      }
+    }
     
     inputHandler()
+  }
+}
+
+const applyParentInlineHandler = (parent: any) => {
+  if(['b', 'i', 'u', 's'].includes(parent.getAttribute('data-tag'))) {
+    parent.setAttribute('data-tag', 'span')
+    applyParentInlineHandler(parent)
   }
 }
 </script>
@@ -177,21 +237,21 @@ const applyHandler = () => {
           <li class="editorItem" :class="toolBlock === 'h1' ? 'active' : ''" @click="toolBlock = 'h1'; changeBlockHandler();"><TypeH1 /></li>
           <li class="editorItem" :class="toolBlock === 'h2' ? 'active' : ''" @click="toolBlock = 'h2'; changeBlockHandler();"><TypeH2 /></li>
           <li class="editorItem" :class="toolBlock === 'h3' ? 'active' : ''" @click="toolBlock = 'h3'; changeBlockHandler();"><TypeH3 /></li>
-          <li class="editorItem" :class="toolDefault === 'b' ? 'active' : ''" @click="toolDefault = 'b'; applyHandler();"><TypeBold /></li>
-          <li class="editorItem" :class="toolDefault === 'i' ? 'active' : ''" @click="toolDefault = 'i'; applyHandler();"><TypeItalic /></li>
-          <li class="editorItem" :class="toolDefault === 'u' ? 'active' : ''" @click="toolDefault = 'u'; applyHandler();"><TypeUnderline /></li>
-          <li class="editorItem" :class="toolDefault === 's' ? 'active' : ''" @click="toolDefault = 's'; applyHandler();"><TypeStrikethrough /></li>
+          <li class="editorItem" :class="toolInlines.includes('b') ? 'active' : ''" @click="toolDefault = 'b'; applyHandler();"><TypeBold /></li>
+          <li class="editorItem" :class="toolInlines.includes('i') ? 'active' : ''" @click="toolDefault = 'i'; applyHandler();"><TypeItalic /></li>
+          <li class="editorItem" :class="toolInlines.includes('u') ? 'active' : ''" @click="toolDefault = 'u'; applyHandler();"><TypeUnderline /></li>
+          <li class="editorItem" :class="toolInlines.includes('s') ? 'active' : ''" @click="toolDefault = 's'; applyHandler();"><TypeStrikethrough /></li>
         </ul>
         <ul v-if="showCode === true" class="editorMenu">
           <li class="editorItem" :class="{active: viewCode === 'text'}" @click="viewCode = 'text'">Editor</li>
           <li class="editorItem" :class="{active: viewCode === 'html'}" @click="viewCode = 'html'">HTML</li>
         </ul>
       </div>
-      <textarea v-if="showCode === true && viewCode === 'html'" class="editorContent" :value="editorContentRef?.contentWindow.document.body.innerHTML" :style="{height}" readonly></textarea>
+      <textarea v-if="showCode === true && viewCode === 'html'" class="editorContent" :value="modelValue" :style="{height}" readonly></textarea>
       <iframe v-else ref="editorContentRef" src="about:blank" :srcdoc="contentHTML" class="editorContent" :style="{height}"></iframe>
       <div class="editorStatusbar">
         <ul class="editorMenu">
-          <li class="editorItem plain">{{ toolBlock }} &gt; Status</li>
+          <li class="editorItem plain">{{ toolBlock }} {{ toolInlines.length >= 1 ? '› '+ toolInlines.join(' › ') : '' }}</li>
         </ul>
         <ul class="editorMenu">
           <li class="editorItem plain">Total: {{ String(content).split(' ').length }} words</li>

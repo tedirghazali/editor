@@ -1,6 +1,6 @@
 {
   "name": "tedir-editor",
-  "version": "0.0.1-wood-0",
+  "version": "0.0.1-wood-1",
   "description": "Tedir Editor is rich text editor for Vue 3 & Web Components",
   "main": "dist/vue/tedir-editor-vue.umd.js",
   "module": "dist/vue/tedir-editor-vue.es.js",
