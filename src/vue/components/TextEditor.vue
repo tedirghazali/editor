@@ -17,7 +17,7 @@ const props = withDefaults(defineProps<{
   showCode?: boolean
 }>(), {
   //@ts-ignore
-  modelValue: '<p></p>',
+  modelValue: '<p>Start writing...</p>',
   height: '300px',
   showCode: false
 })
@@ -70,7 +70,7 @@ const contentHTML = computed<string>(() => {
       [data-tag=s] { text-decoration: line-through; }
     </style>
   </head>
-  <body contenteditable="true">
+  <body contenteditable="true" spellcheck="false">
     ${newHTML}
   </body>
 </html>`
@@ -230,7 +230,7 @@ const applyParentInlineHandler = (parent: any) => {
 </script>
 
 <template>
-  <div class="editor editorText tedirEditor">
+  <div class="editor editorText tedirEditor" @mouseout="inputHandler">
       <div class="editorToolbar">
         <ul class="editorMenu">
           <li class="editorItem" :class="toolBlock === 'p' ? 'active' : ''" @click="toolBlock = 'p'; changeBlockHandler();"><Paragraph /></li>

@@ -1033,7 +1033,7 @@ function pn() {
 function Sn(e) {
   const { type: t, vnode: n, proxy: o, withProxy: r, props: s, propsOptions: [i], slots: c, attrs: a, emit: u, render: h, renderCache: d, data: _, setupState: D, ctx: A, inheritAttrs: C } = e;
   let W, U;
-  const j = dn(e);
+  const H = dn(e);
   process.env.NODE_ENV !== "production" && (Xn = !1);
   try {
     if (n.shapeFlag & 4) {
@@ -1068,7 +1068,7 @@ function Sn(e) {
       }
     }
   }
-  return n.dirs && (process.env.NODE_ENV !== "production" && !zo(q) && O("Runtime directive used on component with non-element root node. The directives will not function as intended."), q = Pe(q), q.dirs = q.dirs ? q.dirs.concat(n.dirs) : n.dirs), n.transition && (process.env.NODE_ENV !== "production" && !zo(q) && O("Component inside <Transition> renders non-element root node that cannot be animated."), q.transition = n.transition), process.env.NODE_ENV !== "production" && se ? se(q) : W = q, dn(j), W;
+  return n.dirs && (process.env.NODE_ENV !== "production" && !zo(q) && O("Runtime directive used on component with non-element root node. The directives will not function as intended."), q = Pe(q), q.dirs = q.dirs ? q.dirs.concat(n.dirs) : n.dirs), n.transition && (process.env.NODE_ENV !== "production" && !zo(q) && O("Component inside <Transition> renders non-element root node that cannot be animated."), q.transition = n.transition), process.env.NODE_ENV !== "production" && se ? se(q) : W = q, dn(H), W;
 }
 const Ui = (e) => {
   const t = e.children, n = e.dynamicChildren, o = Gr(t);
@@ -1172,28 +1172,28 @@ function Pt(e, t, n) {
 }
 function es(e, t, { immediate: n, deep: o, flush: r, onTrack: s, onTrigger: i } = z) {
   process.env.NODE_ENV !== "production" && !t && (n !== void 0 && O('watch() "immediate" option is only respected when using the watch(source, callback, options?) signature.'), o !== void 0 && O('watch() "deep" option is only respected when using the watch(source, callback, options?) signature.'));
-  const c = (j) => {
-    O("Invalid watch source: ", j, "A watch source can only be a getter/effect function, a ref, a reactive object, or an array of these types.");
+  const c = (H) => {
+    O("Invalid watch source: ", H, "A watch source can only be a getter/effect function, a ref, a reactive object, or an array of these types.");
   }, a = oe;
   let u, h = !1, d = !1;
-  if (re(e) ? (u = () => e.value, h = un(e)) : at(e) ? (u = () => e, o = !0) : I(e) ? (d = !0, h = e.some((j) => at(j) || un(j)), u = () => e.map((j) => {
-    if (re(j))
-      return j.value;
-    if (at(j))
-      return yt(j);
-    if (k(j))
-      return je(j, a, 2);
-    process.env.NODE_ENV !== "production" && c(j);
+  if (re(e) ? (u = () => e.value, h = un(e)) : at(e) ? (u = () => e, o = !0) : I(e) ? (d = !0, h = e.some((H) => at(H) || un(H)), u = () => e.map((H) => {
+    if (re(H))
+      return H.value;
+    if (at(H))
+      return yt(H);
+    if (k(H))
+      return je(H, a, 2);
+    process.env.NODE_ENV !== "production" && c(H);
   })) : k(e) ? t ? u = () => je(e, a, 2) : u = () => {
     if (!(a && a.isUnmounted))
       return _ && _(), Ne(e, a, 3, [D]);
   } : (u = le, process.env.NODE_ENV !== "production" && c(e)), t && o) {
-    const j = u;
-    u = () => yt(j());
+    const H = u;
+    u = () => yt(H());
   }
-  let _, D = (j) => {
+  let _, D = (H) => {
     _ = U.onStop = () => {
-      je(j, a, 4);
+      je(H, a, 4);
     };
   };
   if (Kt)
@@ -1206,12 +1206,12 @@ function es(e, t, { immediate: n, deep: o, flush: r, onTrack: s, onTrigger: i } 
   const C = () => {
     if (!!U.active)
       if (t) {
-        const j = U.run();
-        (o || h || (d ? j.some((q, se) => Ft(q, A[se])) : Ft(j, A))) && (_ && _(), Ne(t, a, 3, [
-          j,
+        const H = U.run();
+        (o || h || (d ? H.some((q, se) => Ft(q, A[se])) : Ft(H, A))) && (_ && _(), Ne(t, a, 3, [
+          H,
           A === qo ? void 0 : A,
           D
-        ]), A = j);
+        ]), A = H);
       } else
         U.run();
   };
@@ -1331,11 +1331,11 @@ const ve = [Function, Array], Gi = {
           return o.isLeaving = !0, C.afterLeave = () => {
             o.isLeaving = !1, n.update();
           }, Fn(i);
-        a === "in-out" && u.type !== ce && (C.delayLeave = (W, U, j) => {
+        a === "in-out" && u.type !== ce && (C.delayLeave = (W, U, H) => {
           const q = ns(o, _);
           q[String(_.key)] = _, W._leaveCb = () => {
             U(), W._leaveCb = void 0, delete h.delayedLeave;
-          }, h.delayedLeave = j;
+          }, h.delayedLeave = H;
         });
       }
       return i;
@@ -1348,7 +1348,7 @@ function ns(e, t) {
   return o || (o = /* @__PURE__ */ Object.create(null), n.set(t.type, o)), o;
 }
 function Zn(e, t, n, o) {
-  const { appear: r, mode: s, persisted: i = !1, onBeforeEnter: c, onEnter: a, onAfterEnter: u, onEnterCancelled: h, onBeforeLeave: d, onLeave: _, onAfterLeave: D, onLeaveCancelled: A, onBeforeAppear: C, onAppear: W, onAfterAppear: U, onAppearCancelled: j } = t, q = String(e.key), se = ns(n, e), K = (b, T) => {
+  const { appear: r, mode: s, persisted: i = !1, onBeforeEnter: c, onEnter: a, onAfterEnter: u, onEnterCancelled: h, onBeforeLeave: d, onLeave: _, onAfterLeave: D, onLeaveCancelled: A, onBeforeAppear: C, onAppear: W, onAfterAppear: U, onAppearCancelled: H } = t, q = String(e.key), se = ns(n, e), K = (b, T) => {
     b && Ne(b, o, 9, T);
   }, ye = (b, T) => {
     const P = T[1];
@@ -1371,7 +1371,7 @@ function Zn(e, t, n, o) {
       let T = a, P = u, ee = h;
       if (!n.isMounted)
         if (r)
-          T = W || a, P = U || u, ee = j || h;
+          T = W || a, P = U || u, ee = H || h;
         else
           return;
       let ie = !1;
@@ -1632,7 +1632,7 @@ function ml(e) {
     activated: C,
     deactivated: W,
     beforeDestroy: U,
-    beforeUnmount: j,
+    beforeUnmount: H,
     destroyed: q,
     unmounted: se,
     render: K,
@@ -1706,7 +1706,7 @@ function ml(e) {
   function pe(L, B) {
     I(B) ? B.forEach((Ce) => L(Ce.bind(n))) : B && L(B.bind(n));
   }
-  if (pe(rl, d), pe(Oo, _), pe(sl, D), pe(is, A), pe(tl, C), pe(nl, W), pe(al, b), pe(cl, ye), pe(ll, R), pe(ls, j), pe(cs, se), pe(il, T), I(P))
+  if (pe(rl, d), pe(Oo, _), pe(sl, D), pe(is, A), pe(tl, C), pe(nl, W), pe(al, b), pe(cl, ye), pe(ll, R), pe(ls, H), pe(cs, se), pe(il, T), I(P))
     if (P.length) {
       const L = e.exposed || (e.exposed = {});
       P.forEach((B) => {
@@ -2209,7 +2209,7 @@ function Pl(e, t) {
         U(l, f, p, g);
         break;
       case ln:
-        l == null ? j(f, p, g, w) : process.env.NODE_ENV !== "production" && q(l, f, p, w);
+        l == null ? H(f, p, g, w) : process.env.NODE_ENV !== "production" && q(l, f, p, w);
         break;
       case we:
         Se(l, f, p, g, m, N, w, E, y);
@@ -2227,7 +2227,7 @@ function Pl(e, t) {
     }
   }, U = (l, f, p, g) => {
     l == null ? o(f.el = a(f.children || ""), p, g) : f.el = l.el;
-  }, j = (l, f, p, g) => {
+  }, H = (l, f, p, g) => {
     [l.el, l.anchor] = A(l.children, f, p, g, l.el, l.anchor);
   }, q = (l, f, p, g) => {
     if (f.children !== l.children) {
@@ -2249,8 +2249,8 @@ function Pl(e, t) {
     w = w || f.type === "svg", l == null ? R(f, p, g, m, N, w, E, y) : P(l, f, m, N, w, E, y);
   }, R = (l, f, p, g, m, N, w, E) => {
     let y, v;
-    const { type: V, props: x, shapeFlag: $, transition: M, dirs: H } = l;
-    if (y = l.el = i(l.type, N, x && x.is, x), $ & 8 ? h(y, l.children) : $ & 16 && T(l.children, y, null, g, m, N && V !== "foreignObject", w, E), H && et(l, null, g, "created"), x) {
+    const { type: V, props: x, shapeFlag: $, transition: M, dirs: j } = l;
+    if (y = l.el = i(l.type, N, x && x.is, x), $ & 8 ? h(y, l.children) : $ & 16 && T(l.children, y, null, g, m, N && V !== "foreignObject", w, E), j && et(l, null, g, "created"), x) {
       for (const J in x)
         J !== "value" && !tn(J) && s(y, J, null, x[J], N, l.children, g, m, Re);
       "value" in x && s(y, "value", null, x.value), (v = x.onVnodeBeforeMount) && Ie(v, g, l);
@@ -2261,10 +2261,10 @@ function Pl(e, t) {
     }), Object.defineProperty(y, "__vueParentComponent", {
       value: g,
       enumerable: !1
-    })), H && et(l, null, g, "beforeMount");
+    })), j && et(l, null, g, "beforeMount");
     const Y = (!m || m && !m.pendingBranch) && M && !M.persisted;
-    Y && M.beforeEnter(y), o(y, f, p), ((v = x && x.onVnodeMounted) || Y || H) && he(() => {
-      v && Ie(v, g, l), Y && M.enter(y), H && et(l, null, g, "mounted");
+    Y && M.beforeEnter(y), o(y, f, p), ((v = x && x.onVnodeMounted) || Y || j) && he(() => {
+      v && Ie(v, g, l), Y && M.enter(y), j && et(l, null, g, "mounted");
     }, m);
   }, b = (l, f, p, g, m) => {
     if (p && D(l, p), g)
@@ -2289,8 +2289,8 @@ function Pl(e, t) {
     const x = l.props || z, $ = f.props || z;
     let M;
     p && tt(p, !1), (M = $.onVnodeBeforeUpdate) && Ie(M, p, f, l), V && et(f, l, p, "beforeUpdate"), p && tt(p, !0), process.env.NODE_ENV !== "production" && ut && (y = 0, w = !1, v = null);
-    const H = m && f.type !== "foreignObject";
-    if (v ? (ee(l.dynamicChildren, v, E, p, g, H, N), process.env.NODE_ENV !== "production" && p && p.type.__hmrId && sn(l, f)) : w || Ce(l, f, E, null, p, g, H, N, !1), y > 0) {
+    const j = m && f.type !== "foreignObject";
+    if (v ? (ee(l.dynamicChildren, v, E, p, g, j, N), process.env.NODE_ENV !== "production" && p && p.type.__hmrId && sn(l, f)) : w || Ce(l, f, E, null, p, g, j, N, !1), y > 0) {
       if (y & 16)
         ie(E, f, x, $, p, g, m);
       else if (y & 2 && x.class !== $.class && s(E, "class", null, $.class, m), y & 4 && s(E, "style", x.style, $.style, m), y & 8) {
@@ -2353,8 +2353,8 @@ function Pl(e, t) {
   }, L = (l, f, p, g, m, N, w) => {
     const E = () => {
       if (l.isMounted) {
-        let { next: V, bu: x, u: $, parent: M, vnode: H } = l, Y = V, J;
-        process.env.NODE_ENV !== "production" && nn(V || l.vnode), tt(l, !1), V ? (V.el = H.el, B(l, V, w)) : V = H, x && $t(x), (J = V.props && V.props.onVnodeBeforeUpdate) && Ie(J, M, V, H), tt(l, !0), process.env.NODE_ENV !== "production" && Fe(l, "render");
+        let { next: V, bu: x, u: $, parent: M, vnode: j } = l, Y = V, J;
+        process.env.NODE_ENV !== "production" && nn(V || l.vnode), tt(l, !1), V ? (V.el = j.el, B(l, V, w)) : V = j, x && $t(x), (J = V.props && V.props.onVnodeBeforeUpdate) && Ie(J, M, V, j), tt(l, !0), process.env.NODE_ENV !== "production" && Fe(l, "render");
         const G = Sn(l);
         process.env.NODE_ENV !== "production" && He(l, "render");
         const Oe = l.subTree;
@@ -2366,10 +2366,10 @@ function Pl(e, t) {
           l,
           m,
           N
-        ), process.env.NODE_ENV !== "production" && He(l, "patch"), V.el = G.el, Y === null && qi(l, G.el), $ && he($, m), (J = V.props && V.props.onVnodeUpdated) && he(() => Ie(J, M, V, H), m), process.env.NODE_ENV !== "production" && Yr(l), process.env.NODE_ENV !== "production" && on();
+        ), process.env.NODE_ENV !== "production" && He(l, "patch"), V.el = G.el, Y === null && qi(l, G.el), $ && he($, m), (J = V.props && V.props.onVnodeUpdated) && he(() => Ie(J, M, V, j), m), process.env.NODE_ENV !== "production" && Yr(l), process.env.NODE_ENV !== "production" && on();
       } else {
         let V;
-        const { el: x, props: $ } = f, { bm: M, m: H, parent: Y } = l, J = rn(f);
+        const { el: x, props: $ } = f, { bm: M, m: j, parent: Y } = l, J = rn(f);
         if (tt(l, !1), M && $t(M), !J && (V = $ && $.onVnodeBeforeMount) && Ie(V, Y, f), tt(l, !0), x && Mn) {
           const G = () => {
             process.env.NODE_ENV !== "production" && Fe(l, "render"), l.subTree = Sn(l), process.env.NODE_ENV !== "production" && He(l, "render"), process.env.NODE_ENV !== "production" && Fe(l, "hydrate"), Mn(x, l.subTree, l, m, null), process.env.NODE_ENV !== "production" && He(l, "hydrate");
@@ -2382,7 +2382,7 @@ function Pl(e, t) {
           const G = l.subTree = Sn(l);
           process.env.NODE_ENV !== "production" && He(l, "render"), process.env.NODE_ENV !== "production" && Fe(l, "patch"), C(null, G, p, g, l, m, N), process.env.NODE_ENV !== "production" && He(l, "patch"), f.el = G.el;
         }
-        if (H && he(H, m), !J && (V = $ && $.onVnodeMounted)) {
+        if (j && he(j, m), !J && (V = $ && $.onVnodeMounted)) {
           const G = f;
           he(() => Ie(V, Y, G), m);
         }
@@ -2424,38 +2424,38 @@ function Pl(e, t) {
     const V = f.length;
     let x = l.length - 1, $ = V - 1;
     for (; v <= x && v <= $; ) {
-      const M = l[v], H = f[v] = y ? Je(f[v]) : xe(f[v]);
-      if (st(M, H))
-        C(M, H, p, null, m, N, w, E, y);
+      const M = l[v], j = f[v] = y ? Je(f[v]) : xe(f[v]);
+      if (st(M, j))
+        C(M, j, p, null, m, N, w, E, y);
       else
         break;
       v++;
     }
     for (; v <= x && v <= $; ) {
-      const M = l[x], H = f[$] = y ? Je(f[$]) : xe(f[$]);
-      if (st(M, H))
-        C(M, H, p, null, m, N, w, E, y);
+      const M = l[x], j = f[$] = y ? Je(f[$]) : xe(f[$]);
+      if (st(M, j))
+        C(M, j, p, null, m, N, w, E, y);
       else
         break;
       x--, $--;
     }
     if (v > x) {
       if (v <= $) {
-        const M = $ + 1, H = M < V ? f[M].el : g;
+        const M = $ + 1, j = M < V ? f[M].el : g;
         for (; v <= $; )
-          C(null, f[v] = y ? Je(f[v]) : xe(f[v]), p, H, m, N, w, E, y), v++;
+          C(null, f[v] = y ? Je(f[v]) : xe(f[v]), p, j, m, N, w, E, y), v++;
       }
     } else if (v > $)
       for (; v <= x; )
         ze(l[v], m, N, !0), v++;
     else {
-      const M = v, H = v, Y = /* @__PURE__ */ new Map();
-      for (v = H; v <= $; v++) {
+      const M = v, j = v, Y = /* @__PURE__ */ new Map();
+      for (v = j; v <= $; v++) {
         const fe = f[v] = y ? Je(f[v]) : xe(f[v]);
         fe.key != null && (process.env.NODE_ENV !== "production" && Y.has(fe.key) && O("Duplicate keys found during update:", JSON.stringify(fe.key), "Make sure keys are unique."), Y.set(fe.key, v));
       }
       let J, G = 0;
-      const Oe = $ - H + 1;
+      const Oe = $ - j + 1;
       let vt = !1, Ao = 0;
       const Tt = new Array(Oe);
       for (v = 0; v < Oe; v++)
@@ -2470,16 +2470,16 @@ function Pl(e, t) {
         if (fe.key != null)
           Te = Y.get(fe.key);
         else
-          for (J = H; J <= $; J++)
-            if (Tt[J - H] === 0 && st(fe, f[J])) {
+          for (J = j; J <= $; J++)
+            if (Tt[J - j] === 0 && st(fe, f[J])) {
               Te = J;
               break;
             }
-        Te === void 0 ? ze(fe, m, N, !0) : (Tt[Te - H] = v + 1, Te >= Ao ? Ao = Te : vt = !0, C(fe, f[Te], p, null, m, N, w, E, y), G++);
+        Te === void 0 ? ze(fe, m, N, !0) : (Tt[Te - j] = v + 1, Te >= Ao ? Ao = Te : vt = !0, C(fe, f[Te], p, null, m, N, w, E, y), G++);
       }
       const Mo = vt ? Sl(Tt) : Ot;
       for (J = Mo.length - 1, v = Oe - 1; v >= 0; v--) {
-        const fe = H + v, Te = f[fe], ko = fe + 1 < V ? f[fe + 1].el : g;
+        const fe = j + v, Te = f[fe], ko = fe + 1 < V ? f[fe + 1].el : g;
         Tt[v] === 0 ? C(null, Te, p, ko, m, N, w, E, y) : vt && (J < 0 || v !== Mo[J] ? gt(Te, p, ko, 2) : J--);
       }
     }
@@ -2512,12 +2512,12 @@ function Pl(e, t) {
       if (g === 0)
         E.beforeEnter(N), o(N, f, p), he(() => E.enter(N), m);
       else {
-        const { leave: x, delayLeave: $, afterLeave: M } = E, H = () => o(N, f, p), Y = () => {
+        const { leave: x, delayLeave: $, afterLeave: M } = E, j = () => o(N, f, p), Y = () => {
           x(N, () => {
-            H(), M && M();
+            j(), M && M();
           });
         };
-        $ ? $(N, H, Y) : Y();
+        $ ? $(N, j, Y) : Y();
       }
     else
       o(N, f, p);
@@ -2527,9 +2527,9 @@ function Pl(e, t) {
       f.ctx.deactivate(l);
       return;
     }
-    const M = V & 1 && $, H = !rn(l);
+    const M = V & 1 && $, j = !rn(l);
     let Y;
-    if (H && (Y = w && w.onVnodeBeforeUnmount) && Ie(Y, f, l), V & 6)
+    if (j && (Y = w && w.onVnodeBeforeUnmount) && Ie(Y, f, l), V & 6)
       $s(l.component, p, g);
     else {
       if (V & 128) {
@@ -2538,7 +2538,7 @@ function Pl(e, t) {
       }
       M && et(l, null, f, "beforeUnmount"), V & 64 ? l.type.remove(l, f, p, m, _t, g) : v && (N !== we || x > 0 && x & 64) ? Re(v, f, p, !1, !0) : (N === we && x & 384 || !m && V & 16) && Re(y, f, p), g && In(l);
     }
-    (H && (Y = w && w.onVnodeUnmounted) || M) && he(() => {
+    (j && (Y = w && w.onVnodeUnmounted) || M) && he(() => {
       Y && Ie(Y, f, l), M && et(l, null, f, "unmounted");
     }, p);
   }, In = (l) => {
@@ -3576,13 +3576,13 @@ const ga = /* @__PURE__ */ Ue(ua, [["render", ma]]), _a = {}, va = {
 function Na(e, t) {
   return _e(), Ee("svg", va, Ea);
 }
-const ya = /* @__PURE__ */ Ue(_a, [["render", Na]]), Oa = { class: "editor editorText tedirEditor" }, wa = { class: "editorToolbar" }, xa = { class: "editorMenu" }, Da = {
+const ya = /* @__PURE__ */ Ue(_a, [["render", Na]]), Oa = { class: "editorToolbar" }, wa = { class: "editorMenu" }, xa = {
   key: 0,
   class: "editorMenu"
-}, Va = ["value"], Ca = ["srcdoc"], Ta = { class: "editorStatusbar" }, $a = { class: "editorMenu" }, Ia = { class: "editorItem plain" }, Aa = { class: "editorMenu" }, Ma = { class: "editorItem plain" }, ka = /* @__PURE__ */ rs({
+}, Da = ["value"], Va = ["srcdoc"], Ca = { class: "editorStatusbar" }, Ta = { class: "editorMenu" }, $a = { class: "editorItem plain" }, Ia = { class: "editorMenu" }, Aa = { class: "editorItem plain" }, Ma = /* @__PURE__ */ rs({
   __name: "TextEditor",
   props: {
-    modelValue: { default: "<p></p>" },
+    modelValue: { default: "<p>Start writing...</p>" },
     height: { default: "300px" },
     showCode: { type: Boolean, default: !1 }
   },
@@ -3619,7 +3619,7 @@ const ya = /* @__PURE__ */ Ue(_a, [["render", Na]]), Oa = { class: "editor edito
       [data-tag=s] { text-decoration: line-through; }
     </style>
   </head>
-  <body contenteditable="true">
+  <body contenteditable="true" spellcheck="false">
     ${h.value.replace(/\<(p|h1|h2|h3)\>/g, '<div data-tag="$1">').replace(/\<\/(p|h1|h2|h3)\>/g, "</div>").replace(/\<(b|i|u|s)\>/g, '<span data-tag="$1">').replace(/\<\/(b|i|u|s)\>/g, "</span>")}
   </body>
 </html>`);
@@ -3648,12 +3648,12 @@ const ya = /* @__PURE__ */ Ue(_a, [["render", Na]]), Oa = { class: "editor edito
     }), Pt(d, () => {
       h.value = n.modelValue;
     }), Pt(h, () => {
-      j();
+      H();
     });
     const D = (R) => {
       (R == null ? void 0 : R.tagName.toLowerCase()) === "div" && (c.value = R, o.value = R.getAttribute("data-tag"), s.value = []);
     }, A = () => {
-      c.value !== null && c.value.tagName.toLowerCase() === "div" && (c.value.setAttribute("data-tag", o.value), j());
+      c.value !== null && c.value.tagName.toLowerCase() === "div" && (c.value.setAttribute("data-tag", o.value), H());
     }, C = (R) => {
       const b = [].slice.call(R);
       for (let T of b)
@@ -3662,7 +3662,7 @@ const ya = /* @__PURE__ */ Ue(_a, [["render", Na]]), Oa = { class: "editor edito
         });
     }, W = (R) => {
       R.tagName.toLowerCase() !== "div" && s.value.unshift(R.getAttribute("data-tag"));
-    }, U = $e(null), j = () => {
+    }, U = $e(null), H = () => {
       clearTimeout(U.value), U.value = setTimeout(() => {
         if (i.value !== null) {
           const T = [].slice.call(i.value.contentDocument.body.children).map((P) => {
@@ -3695,14 +3695,17 @@ const ya = /* @__PURE__ */ Ue(_a, [["render", Na]]), Oa = { class: "editor edito
           b.setAttribute("data-tag", r.value), R.surroundContents(b);
         } else
           a.value !== null && (a.value.getAttribute("data-tag") === "span" ? ye(a.value.parentElement) : a.value.setAttribute("data-tag", "span"));
-        j();
+        H();
       }
     }, ye = (R) => {
       ["b", "i", "u", "s"].includes(R.getAttribute("data-tag")) && (R.setAttribute("data-tag", "span"), ye(R));
     };
-    return (R, b) => (_e(), Ee("div", Oa, [
-      X("div", wa, [
-        X("ul", xa, [
+    return (R, b) => (_e(), Ee("div", {
+      class: "editor editorText tedirEditor",
+      onMouseout: H
+    }, [
+      X("div", Oa, [
+        X("ul", wa, [
           X("li", {
             class: ge(["editorItem", o.value === "p" ? "active" : ""]),
             onClick: b[0] || (b[0] = (T) => {
@@ -3768,7 +3771,7 @@ const ya = /* @__PURE__ */ Ue(_a, [["render", Na]]), Oa = { class: "editor edito
             ne(ya)
           ], 2)
         ]),
-        e.showCode === !0 ? (_e(), Ee("ul", Da, [
+        e.showCode === !0 ? (_e(), Ee("ul", xa, [
           X("li", {
             class: ge(["editorItem", { active: d.value === "text" }]),
             onClick: b[8] || (b[8] = (T) => d.value = "text")
@@ -3785,7 +3788,7 @@ const ya = /* @__PURE__ */ Ue(_a, [["render", Na]]), Oa = { class: "editor edito
         value: e.modelValue,
         style: Rt({ height: e.height }),
         readonly: ""
-      }, null, 12, Va)) : (_e(), Ee("iframe", {
+      }, null, 12, Da)) : (_e(), Ee("iframe", {
         key: 1,
         ref_key: "editorContentRef",
         ref: i,
@@ -3793,23 +3796,23 @@ const ya = /* @__PURE__ */ Ue(_a, [["render", Na]]), Oa = { class: "editor edito
         srcdoc: Rr(_),
         class: "editorContent",
         style: Rt({ height: e.height })
-      }, null, 12, Ca)),
-      X("div", Ta, [
-        X("ul", $a, [
-          X("li", Ia, kn(o.value) + " " + kn(s.value.length >= 1 ? "\u203A " + s.value.join(" \u203A ") : ""), 1)
+      }, null, 12, Va)),
+      X("div", Ca, [
+        X("ul", Ta, [
+          X("li", $a, kn(o.value) + " " + kn(s.value.length >= 1 ? "\u203A " + s.value.join(" \u203A ") : ""), 1)
         ]),
-        X("ul", Aa, [
-          X("li", Ma, "Total: " + kn(String(h.value).split(" ").length) + " words", 1)
+        X("ul", Ia, [
+          X("li", Aa, "Total: " + kn(String(h.value).split(" ").length) + " words", 1)
         ])
       ])
-    ]));
+    ], 32));
   }
-}), Pa = `.editor[data-v-4a127d4b]{width:100%;background-color:#fff;background-clip:border-box;word-wrap:break-word}.editor>*[data-v-4a127d4b]:first-child{border-top-right-radius:.25rem;border-top-left-radius:.25rem}.editor>*[data-v-4a127d4b]:last-child{border-bottom-right-radius:.25rem;border-bottom-left-radius:.25rem}.editorToolbar[data-v-4a127d4b]{border-bottom:1px solid #d9d9d9;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;padding:.5rem;background-color:#fff;color:inherit}.editorStatusbar[data-v-4a127d4b]{border-top:1px solid #d9d9d9;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;padding:.5rem;background-color:#fff;color:inherit}.editorContent[data-v-4a127d4b]{flex:1 1 auto;padding:1rem .75rem;outline:0;display:block;position:relative;z-index:14;background-color:#fff;border-color:#d9d9d9}.editorMenu[data-v-4a127d4b]{display:flex;padding-left:0;margin:0;list-style:none;gap:5px}.editorItem[data-v-4a127d4b]{display:block;padding:.25rem;border-radius:.25rem;color:#4a5568;text-decoration:none;cursor:pointer;border:1px solid transparent;transition:color .15s ease-in-out,background-color .15s ease-in-out,border-color .15s ease-in-out}.editorItem[data-v-4a127d4b]:not(.active):not(.plain):hover{background-color:#f2f2f2;color:inherit;border-color:#d9d9d9}.editorItem.active[data-v-4a127d4b]{background-color:#e7eefa;color:inherit;border-color:#b8e7fd}.editorItem.plain[data-v-4a127d4b]{cursor:default}.editorText[data-v-4a127d4b]{position:relative;display:flex;flex-direction:column;border:1px solid #d9d9d9;border-radius:.25rem;z-index:15}.editorTooltip[data-v-4a127d4b]{position:relative;display:flex;flex-direction:column}.editorSection[data-v-4a127d4b]{border-top-left-radius:0}.editorSection .editorBlock[data-v-4a127d4b]{position:relative;display:flex;flex-direction:column;border:1px solid #d9d9d9;border-radius:.25rem;z-index:15;border-top-left-radius:0;margin-top:47px}.editorSection .editorBlock .editorToolbar[data-v-4a127d4b]{position:absolute;top:-37px;left:-1px;border:1px solid #d9d9d9;border-top-right-radius:.25rem;border-top-left-radius:.25rem;z-index:13}.editorBackdrop[data-v-4a127d4b]{position:fixed;z-index:25;inset:0 3em 3em 0;width:100vw;height:100vh;display:none}.editorInline[data-v-4a127d4b]{position:relative;display:inline-block}.editorInline .editorToolbar[data-v-4a127d4b]{visibility:hidden;position:absolute;z-index:75;bottom:-47px;left:0px;display:inline-block;border:1px solid #d9d9d9;border-radius:.25rem}.editorInline:hover .editorToolbar[data-v-4a127d4b]{visibility:visible}.editorInline .editorToolbar[data-v-4a127d4b]:after{content:"";position:absolute;z-index:74;top:-16px;left:20px;margin-left:-10px;border-width:8px;border-style:solid;transform:rotate(180deg);border-color:#d9d9d9 transparent transparent transparent}@media (prefers-color-scheme: dark){.editor[data-v-4a127d4b]{background-color:#2f2f2f}.editorToolbar[data-v-4a127d4b],.editorStatusbar[data-v-4a127d4b],.editorContent[data-v-4a127d4b]{background-color:#2f2f2f;border-color:#5f5f5f}.editorItem[data-v-4a127d4b]{color:#d9d9d9}.editorItem[data-v-4a127d4b]:not(.active):not(.plain):hover{background-color:#5f5f5f;color:#d9d9d9;border-color:#5f5f5f}.editorItem.active[data-v-4a127d4b]{background-color:#4a5568;color:#b8e7fd;border-color:#b8e7fd}.editorText[data-v-4a127d4b],.editorSection .editorBlock[data-v-4a127d4b],.editorSection .editorBlock .editorToolbar[data-v-4a127d4b],.editorInline .editorToolbar[data-v-4a127d4b]{border-color:#5f5f5f}.editorInline .editorToolbar[data-v-4a127d4b]:after{border-color:#5f5f5f transparent transparent transparent}}@media (prefers-color-scheme: light){[data-mode=dark] .editor[data-v-4a127d4b]{background-color:#2f2f2f}[data-mode=dark] .editorToolbar[data-v-4a127d4b],[data-mode=dark] .editorStatusbar[data-v-4a127d4b],[data-mode=dark] .editorContent[data-v-4a127d4b]{background-color:#2f2f2f;border-color:#5f5f5f}[data-mode=dark] .editorItem[data-v-4a127d4b]{color:#d9d9d9}[data-mode=dark] .editorItem[data-v-4a127d4b]:not(.active):not(.plain):hover{background-color:#5f5f5f;color:#d9d9d9;border-color:#5f5f5f}[data-mode=dark] .editorItem.active[data-v-4a127d4b]{background-color:#4a5568;color:#b8e7fd;border-color:#b8e7fd}[data-mode=dark] .editorText[data-v-4a127d4b],[data-mode=dark] .editorSection .editorBlock[data-v-4a127d4b],[data-mode=dark] .editorSection .editorBlock .editorToolbar[data-v-4a127d4b],[data-mode=dark] .editorInline .editorToolbar[data-v-4a127d4b]{border-color:#5f5f5f}[data-mode=dark] .editorInline .editorToolbar[data-v-4a127d4b]:after{border-color:#5f5f5f transparent transparent transparent}}@media (prefers-color-scheme: dark){[data-mode=light] .editor[data-v-4a127d4b]{background-color:#fff}[data-mode=light] .editorToolbar[data-v-4a127d4b],[data-mode=light] .editorStatusbar[data-v-4a127d4b],[data-mode=light] .editorContent[data-v-4a127d4b]{background-color:#fff;border-color:#d9d9d9}[data-mode=light] .editorItem[data-v-4a127d4b]{color:#4a5568}[data-mode=light] .editorItem[data-v-4a127d4b]:not(.active):not(.plain):hover{background-color:#f2f2f2;color:inherit;border-color:#d9d9d9}[data-mode=light] .editorItem.active[data-v-4a127d4b]{background-color:#e7eefa;color:inherit;border-color:#b8e7fd}[data-mode=light] .editorText[data-v-4a127d4b],[data-mode=light] .editorSection .editorBlock[data-v-4a127d4b],[data-mode=light] .editorSection .editorBlock .editorToolbar[data-v-4a127d4b],[data-mode=light] .editorInline .editorToolbar[data-v-4a127d4b]{border-color:#d9d9d9}[data-mode=light] .editorInline .editorToolbar[data-v-4a127d4b]:after{border-color:#d9d9d9 transparent transparent transparent}}
-`, Sa = /* @__PURE__ */ Ue(ka, [["styles", [Pa]], ["__scopeId", "data-v-4a127d4b"]]), Ra = yc(Sa);
-function Fa() {
-  customElements.define("text-editor", Ra);
+}), ka = `.editor[data-v-bc55e090]{width:100%;background-color:#fff;background-clip:border-box;word-wrap:break-word}.editor>*[data-v-bc55e090]:first-child{border-top-right-radius:.25rem;border-top-left-radius:.25rem}.editor>*[data-v-bc55e090]:last-child{border-bottom-right-radius:.25rem;border-bottom-left-radius:.25rem}.editorToolbar[data-v-bc55e090]{border-bottom:1px solid #d9d9d9;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;padding:.5rem;background-color:#fff;color:inherit}.editorStatusbar[data-v-bc55e090]{border-top:1px solid #d9d9d9;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;padding:.5rem;background-color:#fff;color:inherit}.editorContent[data-v-bc55e090]{flex:1 1 auto;padding:1rem .75rem;outline:0;display:block;position:relative;z-index:14;background-color:#fff;border-color:#d9d9d9}.editorMenu[data-v-bc55e090]{display:flex;padding-left:0;margin:0;list-style:none;gap:5px}.editorItem[data-v-bc55e090]{display:block;padding:.25rem;border-radius:.25rem;color:#4a5568;text-decoration:none;cursor:pointer;border:1px solid transparent;transition:color .15s ease-in-out,background-color .15s ease-in-out,border-color .15s ease-in-out}.editorItem[data-v-bc55e090]:not(.active):not(.plain):hover{background-color:#f2f2f2;color:inherit;border-color:#d9d9d9}.editorItem.active[data-v-bc55e090]{background-color:#e7eefa;color:inherit;border-color:#b8e7fd}.editorItem.plain[data-v-bc55e090]{cursor:default}.editorText[data-v-bc55e090]{position:relative;display:flex;flex-direction:column;border:1px solid #d9d9d9;border-radius:.25rem;z-index:15}.editorTooltip[data-v-bc55e090]{position:relative;display:flex;flex-direction:column}.editorSection[data-v-bc55e090]{border-top-left-radius:0}.editorSection .editorBlock[data-v-bc55e090]{position:relative;display:flex;flex-direction:column;border:1px solid #d9d9d9;border-radius:.25rem;z-index:15;border-top-left-radius:0;margin-top:47px}.editorSection .editorBlock .editorToolbar[data-v-bc55e090]{position:absolute;top:-37px;left:-1px;border:1px solid #d9d9d9;border-top-right-radius:.25rem;border-top-left-radius:.25rem;z-index:13}.editorBackdrop[data-v-bc55e090]{position:fixed;z-index:25;inset:0 3em 3em 0;width:100vw;height:100vh;display:none}.editorInline[data-v-bc55e090]{position:relative;display:inline-block}.editorInline .editorToolbar[data-v-bc55e090]{visibility:hidden;position:absolute;z-index:75;bottom:-47px;left:0px;display:inline-block;border:1px solid #d9d9d9;border-radius:.25rem}.editorInline:hover .editorToolbar[data-v-bc55e090]{visibility:visible}.editorInline .editorToolbar[data-v-bc55e090]:after{content:"";position:absolute;z-index:74;top:-16px;left:20px;margin-left:-10px;border-width:8px;border-style:solid;transform:rotate(180deg);border-color:#d9d9d9 transparent transparent transparent}@media (prefers-color-scheme: dark){.editor[data-v-bc55e090]{background-color:#2f2f2f}.editorToolbar[data-v-bc55e090],.editorStatusbar[data-v-bc55e090],.editorContent[data-v-bc55e090]{background-color:#2f2f2f;border-color:#5f5f5f}.editorItem[data-v-bc55e090]{color:#d9d9d9}.editorItem[data-v-bc55e090]:not(.active):not(.plain):hover{background-color:#5f5f5f;color:#d9d9d9;border-color:#5f5f5f}.editorItem.active[data-v-bc55e090]{background-color:#4a5568;color:#b8e7fd;border-color:#b8e7fd}.editorText[data-v-bc55e090],.editorSection .editorBlock[data-v-bc55e090],.editorSection .editorBlock .editorToolbar[data-v-bc55e090],.editorInline .editorToolbar[data-v-bc55e090]{border-color:#5f5f5f}.editorInline .editorToolbar[data-v-bc55e090]:after{border-color:#5f5f5f transparent transparent transparent}}@media (prefers-color-scheme: light){[data-mode=dark] .editor[data-v-bc55e090]{background-color:#2f2f2f}[data-mode=dark] .editorToolbar[data-v-bc55e090],[data-mode=dark] .editorStatusbar[data-v-bc55e090],[data-mode=dark] .editorContent[data-v-bc55e090]{background-color:#2f2f2f;border-color:#5f5f5f}[data-mode=dark] .editorItem[data-v-bc55e090]{color:#d9d9d9}[data-mode=dark] .editorItem[data-v-bc55e090]:not(.active):not(.plain):hover{background-color:#5f5f5f;color:#d9d9d9;border-color:#5f5f5f}[data-mode=dark] .editorItem.active[data-v-bc55e090]{background-color:#4a5568;color:#b8e7fd;border-color:#b8e7fd}[data-mode=dark] .editorText[data-v-bc55e090],[data-mode=dark] .editorSection .editorBlock[data-v-bc55e090],[data-mode=dark] .editorSection .editorBlock .editorToolbar[data-v-bc55e090],[data-mode=dark] .editorInline .editorToolbar[data-v-bc55e090]{border-color:#5f5f5f}[data-mode=dark] .editorInline .editorToolbar[data-v-bc55e090]:after{border-color:#5f5f5f transparent transparent transparent}}@media (prefers-color-scheme: dark){[data-mode=light] .editor[data-v-bc55e090]{background-color:#fff}[data-mode=light] .editorToolbar[data-v-bc55e090],[data-mode=light] .editorStatusbar[data-v-bc55e090],[data-mode=light] .editorContent[data-v-bc55e090]{background-color:#fff;border-color:#d9d9d9}[data-mode=light] .editorItem[data-v-bc55e090]{color:#4a5568}[data-mode=light] .editorItem[data-v-bc55e090]:not(.active):not(.plain):hover{background-color:#f2f2f2;color:inherit;border-color:#d9d9d9}[data-mode=light] .editorItem.active[data-v-bc55e090]{background-color:#e7eefa;color:inherit;border-color:#b8e7fd}[data-mode=light] .editorText[data-v-bc55e090],[data-mode=light] .editorSection .editorBlock[data-v-bc55e090],[data-mode=light] .editorSection .editorBlock .editorToolbar[data-v-bc55e090],[data-mode=light] .editorInline .editorToolbar[data-v-bc55e090]{border-color:#d9d9d9}[data-mode=light] .editorInline .editorToolbar[data-v-bc55e090]:after{border-color:#d9d9d9 transparent transparent transparent}}
+`, Pa = /* @__PURE__ */ Ue(Ma, [["styles", [ka]], ["__scopeId", "data-v-bc55e090"]]), Sa = yc(Pa);
+function Ra() {
+  customElements.define("text-editor", Sa);
 }
 export {
-  Ra as TextEditor,
-  Fa as useTedirEditor
+  Sa as TextEditor,
+  Ra as useTedirEditor
 };

@@ -130,19 +130,19 @@ const It = /* @__PURE__ */ _(kt, [["render", Et]]), At = {}, Nt = {
 function Dt(l, i) {
   return r(), d("svg", Nt, Lt);
 }
-const St = /* @__PURE__ */ _(At, [["render", Dt]]), Ot = { class: "editor editorText tedirEditor" }, Rt = { class: "editorToolbar" }, Pt = { class: "editorMenu" }, jt = {
+const St = /* @__PURE__ */ _(At, [["render", Dt]]), Ot = { class: "editorToolbar" }, Rt = { class: "editorMenu" }, Pt = {
   key: 0,
   class: "editorMenu"
-}, Ut = ["value"], qt = ["srcdoc"], Ft = { class: "editorStatusbar" }, Gt = { class: "editorMenu" }, Jt = { class: "editorItem plain" }, Kt = { class: "editorMenu" }, Qt = { class: "editorItem plain" }, Wt = /* @__PURE__ */ S({
+}, jt = ["value"], Ut = ["srcdoc"], qt = { class: "editorStatusbar" }, Ft = { class: "editorMenu" }, Gt = { class: "editorItem plain" }, Jt = { class: "editorMenu" }, Kt = { class: "editorItem plain" }, Qt = /* @__PURE__ */ S({
   __name: "TextEditor",
   props: {
-    modelValue: { default: "<p></p>" },
+    modelValue: { default: "<p>Start writing...</p>" },
     height: { default: "300px" },
     showCode: { type: Boolean, default: !1 }
   },
   emits: ["update:modelValue"],
   setup(l, { emit: i }) {
-    const m = l, s = h(""), c = h(""), u = h([]), g = h(null), b = h(null), w = h(null), V = h(null), $ = h(m.modelValue || "<p></p>"), p = h("text");
+    const m = l, s = h(""), c = h(""), u = h([]), g = h(null), b = h(null), w = h(null), C = h(null), $ = h(m.modelValue || "<p></p>"), p = h("text");
     q();
     const L = O(() => `<!doctype html>
 <html>
@@ -173,7 +173,7 @@ const St = /* @__PURE__ */ _(At, [["render", Dt]]), Ot = { class: "editor editor
       [data-tag=s] { text-decoration: line-through; }
     </style>
   </head>
-  <body contenteditable="true">
+  <body contenteditable="true" spellcheck="false">
     ${$.value.replace(/\<(p|h1|h2|h3)\>/g, '<div data-tag="$1">').replace(/\<\/(p|h1|h2|h3)\>/g, "</div>").replace(/\<(b|i|u|s)\>/g, '<span data-tag="$1">').replace(/\<\/(b|i|u|s)\>/g, "</span>")}
   </body>
 </html>`);
@@ -183,7 +183,7 @@ const St = /* @__PURE__ */ _(At, [["render", Dt]]), Ot = { class: "editor editor
           const e = g.value.contentDocument, t = [].slice.call(e.body.children);
           for (let n of t)
             n.addEventListener("click", (a) => {
-              a.preventDefault(), M(a.target), C(n.children);
+              a.preventDefault(), M(a.target), H(n.children);
             });
           e.addEventListener("selectionchange", E);
         }
@@ -194,7 +194,7 @@ const St = /* @__PURE__ */ _(At, [["render", Dt]]), Ot = { class: "editor editor
           const e = g.value.contentDocument, t = [].slice.call(e.body.children);
           for (let n of t)
             n.addEventListener("click", (a) => {
-              a.preventDefault(), M(a.target), C(n.children);
+              a.preventDefault(), M(a.target), H(n.children);
             });
           e.addEventListener("selectionchange", E);
         }
@@ -202,21 +202,21 @@ const St = /* @__PURE__ */ _(At, [["render", Dt]]), Ot = { class: "editor editor
     }), N(p, () => {
       $.value = m.modelValue;
     }), N($, () => {
-      H();
+      y();
     });
     const M = (e) => {
       (e == null ? void 0 : e.tagName.toLowerCase()) === "div" && (b.value = e, s.value = e.getAttribute("data-tag"), u.value = []);
     }, x = () => {
-      b.value !== null && b.value.tagName.toLowerCase() === "div" && (b.value.setAttribute("data-tag", s.value), H());
-    }, C = (e) => {
+      b.value !== null && b.value.tagName.toLowerCase() === "div" && (b.value.setAttribute("data-tag", s.value), y());
+    }, H = (e) => {
       const t = [].slice.call(e);
       for (let n of t)
         n.addEventListener("click", (a) => {
-          a.preventDefault(), a.stopPropagation(), u.value = [], D(a.target.parentElement), u.value.push(a.target.getAttribute("data-tag")), w.value = a.target, C(n.children);
+          a.preventDefault(), a.stopPropagation(), u.value = [], D(a.target.parentElement), u.value.push(a.target.getAttribute("data-tag")), w.value = a.target, H(n.children);
         });
     }, D = (e) => {
       e.tagName.toLowerCase() !== "div" && u.value.unshift(e.getAttribute("data-tag"));
-    }, z = h(null), H = () => {
+    }, z = h(null), y = () => {
       clearTimeout(z.value), z.value = setTimeout(() => {
         if (g.value !== null) {
           const n = [].slice.call(g.value.contentDocument.body.children).map((a) => {
@@ -240,23 +240,26 @@ const St = /* @__PURE__ */ _(At, [["render", Dt]]), Ot = { class: "editor editor
     }, E = (e) => {
       c.value = "";
       const t = g.value.contentDocument.getSelection();
-      (Number((t == null ? void 0 : t.anchorOffset) || 0) !== 0 && Number((t == null ? void 0 : t.focusOffset) || 0) !== 0 || Number((t == null ? void 0 : t.anchorOffset) || 0) < Number((t == null ? void 0 : t.focusOffset) || 0)) && (V.value = t);
-    }, y = () => {
-      if (V.value !== null) {
-        const e = V.value.getRangeAt(0);
+      (Number((t == null ? void 0 : t.anchorOffset) || 0) !== 0 && Number((t == null ? void 0 : t.focusOffset) || 0) !== 0 || Number((t == null ? void 0 : t.anchorOffset) || 0) < Number((t == null ? void 0 : t.focusOffset) || 0)) && (C.value = t);
+    }, V = () => {
+      if (C.value !== null) {
+        const e = C.value.getRangeAt(0);
         if (e.toString().length >= 2) {
           const t = g.value.contentDocument.createElement("span");
           t.setAttribute("data-tag", c.value), e.surroundContents(t);
         } else
           w.value !== null && (w.value.getAttribute("data-tag") === "span" ? I(w.value.parentElement) : w.value.setAttribute("data-tag", "span"));
-        H();
+        y();
       }
     }, I = (e) => {
       ["b", "i", "u", "s"].includes(e.getAttribute("data-tag")) && (e.setAttribute("data-tag", "span"), I(e));
     };
-    return (e, t) => (r(), d("div", Ot, [
-      o("div", Rt, [
-        o("ul", Pt, [
+    return (e, t) => (r(), d("div", {
+      class: "editor editorText tedirEditor",
+      onMouseout: y
+    }, [
+      o("div", Ot, [
+        o("ul", Rt, [
           o("li", {
             class: v(["editorItem", s.value === "p" ? "active" : ""]),
             onClick: t[0] || (t[0] = (n) => {
@@ -292,7 +295,7 @@ const St = /* @__PURE__ */ _(At, [["render", Dt]]), Ot = { class: "editor editor
           o("li", {
             class: v(["editorItem", u.value.includes("b") ? "active" : ""]),
             onClick: t[4] || (t[4] = (n) => {
-              c.value = "b", y();
+              c.value = "b", V();
             })
           }, [
             f(bt)
@@ -300,7 +303,7 @@ const St = /* @__PURE__ */ _(At, [["render", Dt]]), Ot = { class: "editor editor
           o("li", {
             class: v(["editorItem", u.value.includes("i") ? "active" : ""]),
             onClick: t[5] || (t[5] = (n) => {
-              c.value = "i", y();
+              c.value = "i", V();
             })
           }, [
             f(Ht)
@@ -308,7 +311,7 @@ const St = /* @__PURE__ */ _(At, [["render", Dt]]), Ot = { class: "editor editor
           o("li", {
             class: v(["editorItem", u.value.includes("u") ? "active" : ""]),
             onClick: t[6] || (t[6] = (n) => {
-              c.value = "u", y();
+              c.value = "u", V();
             })
           }, [
             f(It)
@@ -316,13 +319,13 @@ const St = /* @__PURE__ */ _(At, [["render", Dt]]), Ot = { class: "editor editor
           o("li", {
             class: v(["editorItem", u.value.includes("s") ? "active" : ""]),
             onClick: t[7] || (t[7] = (n) => {
-              c.value = "s", y();
+              c.value = "s", V();
             })
           }, [
             f(St)
           ], 2)
         ]),
-        l.showCode === !0 ? (r(), d("ul", jt, [
+        l.showCode === !0 ? (r(), d("ul", Pt, [
           o("li", {
             class: v(["editorItem", { active: p.value === "text" }]),
             onClick: t[8] || (t[8] = (n) => p.value = "text")
@@ -339,7 +342,7 @@ const St = /* @__PURE__ */ _(At, [["render", Dt]]), Ot = { class: "editor editor
         value: l.modelValue,
         style: B({ height: l.height }),
         readonly: ""
-      }, null, 12, Ut)) : (r(), d("iframe", {
+      }, null, 12, jt)) : (r(), d("iframe", {
         key: 1,
         ref_key: "editorContentRef",
         ref: g,
@@ -347,19 +350,19 @@ const St = /* @__PURE__ */ _(At, [["render", Dt]]), Ot = { class: "editor editor
         srcdoc: U(L),
         class: "editorContent",
         style: B({ height: l.height })
-      }, null, 12, qt)),
-      o("div", Ft, [
-        o("ul", Gt, [
-          o("li", Jt, T(s.value) + " " + T(u.value.length >= 1 ? "\u203A " + u.value.join(" \u203A ") : ""), 1)
+      }, null, 12, Ut)),
+      o("div", qt, [
+        o("ul", Ft, [
+          o("li", Gt, T(s.value) + " " + T(u.value.length >= 1 ? "\u203A " + u.value.join(" \u203A ") : ""), 1)
         ]),
-        o("ul", Kt, [
-          o("li", Qt, "Total: " + T(String($.value).split(" ").length) + " words", 1)
+        o("ul", Jt, [
+          o("li", Kt, "Total: " + T(String($.value).split(" ").length) + " words", 1)
         ])
       ])
-    ]));
+    ], 32));
   }
 });
-const Yt = /* @__PURE__ */ _(Wt, [["__scopeId", "data-v-4a127d4b"]]);
+const Xt = /* @__PURE__ */ _(Qt, [["__scopeId", "data-v-bc55e090"]]);
 export {
-  Yt as TextEditor
+  Xt as TextEditor
 };
