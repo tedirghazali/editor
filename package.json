@@ -1,6 +1,6 @@
 {
   "name": "tedir-editor",
-  "version": "0.0.1-wood-2",
+  "version": "0.0.1-wood-3",
   "description": "Tedir Editor is rich text editor for Vue 3 & Web Components",
   "main": "dist/vue/tedir-editor-vue.umd.js",
   "module": "dist/vue/tedir-editor-vue.es.js",
@@ -43,12 +43,12 @@
   },
   "homepage": "https://github.com/tedirghazali/editor#readme",
   "dependencies": {
-    "alga-js": "^0.1.0-stone-9",
     "vue": "^3.2.37"
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^3.1.0",
-    "alga-css": "^1.0.0-ruby-8",
+    "alga-css": "^1.0.0-emerald-2",
+    "alga-js": "^0.1.0-iron-1",
     "typescript": "^4.6.4",
     "vite": "^3.1.0",
     "vue-tsc": "^0.40.4"
