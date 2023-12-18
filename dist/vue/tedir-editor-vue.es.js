@@ -91,7 +91,7 @@ const gt = /* @__PURE__ */ _(rt, [["render", vt]]), _t = {}, mt = {
 function wt(l, i) {
   return r(), d("svg", mt, pt);
 }
-const bt = /* @__PURE__ */ _(_t, [["render", wt]]), $t = {}, xt = {
+const $t = /* @__PURE__ */ _(_t, [["render", wt]]), bt = {}, xt = {
   xmlns: "http://www.w3.org/2000/svg",
   width: "16",
   height: "16",
@@ -104,7 +104,7 @@ const bt = /* @__PURE__ */ _(_t, [["render", wt]]), $t = {}, xt = {
 function Ct(l, i) {
   return r(), d("svg", xt, Vt);
 }
-const Ht = /* @__PURE__ */ _($t, [["render", Ct]]), kt = {}, Tt = {
+const Ht = /* @__PURE__ */ _(bt, [["render", Ct]]), kt = {}, Tt = {
   xmlns: "http://www.w3.org/2000/svg",
   width: "16",
   height: "16",
@@ -142,7 +142,7 @@ const St = /* @__PURE__ */ _(At, [["render", Dt]]), Ot = { class: "editorToolbar
   },
   emits: ["update:modelValue"],
   setup(l, { emit: i }) {
-    const m = l, s = h(""), c = h(""), u = h([]), g = h(null), b = h(null), w = h(null), C = h(null), $ = h(m.modelValue || "<p></p>"), p = h("text");
+    const m = l, s = h(""), c = h(""), u = h([]), g = h(null), $ = h(null), w = h(null), C = h(null), b = h(m.modelValue || "<p></p>"), p = h("text");
     q();
     const L = O(() => `<!doctype html>
 <html>
@@ -174,7 +174,7 @@ const St = /* @__PURE__ */ _(At, [["render", Dt]]), Ot = { class: "editorToolbar
     </style>
   </head>
   <body contenteditable="true" spellcheck="false">
-    ${$.value.replace(/\<(p|h1|h2|h3)\>/g, '<div data-tag="$1">').replace(/\<\/(p|h1|h2|h3)\>/g, "</div>").replace(/\<(b|i|u|s)\>/g, '<span data-tag="$1">').replace(/\<\/(b|i|u|s)\>/g, "</span>")}
+    ${b.value.replace(/\<(p|h1|h2|h3)\>/g, '<div data-tag="$1">').replace(/\<\/(p|h1|h2|h3)\>/g, "</div>").replace(/\<(b|i|u|s)\>/g, '<span data-tag="$1">').replace(/\<\/(b|i|u|s)\>/g, "</span>")}
   </body>
 </html>`);
     R(() => {
@@ -200,14 +200,14 @@ const St = /* @__PURE__ */ _(At, [["render", Dt]]), Ot = { class: "editorToolbar
         }
       }, 200);
     }), N(p, () => {
-      $.value = m.modelValue;
-    }), N($, () => {
+      b.value = m.modelValue;
+    }), N(b, () => {
       y();
     });
     const M = (e) => {
-      (e == null ? void 0 : e.tagName.toLowerCase()) === "div" && (b.value = e, s.value = e.getAttribute("data-tag"), u.value = []);
+      (e == null ? void 0 : e.tagName.toLowerCase()) === "div" && ($.value = e, s.value = e.getAttribute("data-tag"), u.value = []);
     }, x = () => {
-      b.value !== null && b.value.tagName.toLowerCase() === "div" && (b.value.setAttribute("data-tag", s.value), y());
+      $.value !== null && $.value.tagName.toLowerCase() === "div" && ($.value.setAttribute("data-tag", s.value), y());
     }, H = (e) => {
       const t = [].slice.call(e);
       for (let n of t)
@@ -223,7 +223,7 @@ const St = /* @__PURE__ */ _(At, [["render", Dt]]), Ot = { class: "editorToolbar
             const A = a.getAttribute("data-tag");
             return `<${A}>${k(a.childNodes)}</${A}>`;
           }).join(`
-`).replaceAll("<null></null>", "");
+`).replaceAll("<null>", "<p>").replaceAll("</null>", "</p>");
           i("update:modelValue", n);
         }
       }, 300);
@@ -298,7 +298,7 @@ const St = /* @__PURE__ */ _(At, [["render", Dt]]), Ot = { class: "editorToolbar
               c.value = "b", V();
             })
           }, [
-            f(bt)
+            f($t)
           ], 2),
           o("li", {
             class: v(["editorItem", u.value.includes("i") ? "active" : ""]),
@@ -356,13 +356,13 @@ const St = /* @__PURE__ */ _(At, [["render", Dt]]), Ot = { class: "editorToolbar
           o("li", Gt, T(s.value) + " " + T(u.value.length >= 1 ? "\u203A " + u.value.join(" \u203A ") : ""), 1)
         ]),
         o("ul", Jt, [
-          o("li", Kt, "Total: " + T(String($.value).split(" ").length) + " words", 1)
+          o("li", Kt, "Total: " + T(String(b.value).split(" ").length) + " words", 1)
         ])
       ])
     ], 32));
   }
 });
-const Xt = /* @__PURE__ */ _(Qt, [["__scopeId", "data-v-bc55e090"]]);
+const Xt = /* @__PURE__ */ _(Qt, [["__scopeId", "data-v-53047532"]]);
 export {
   Xt as TextEditor
 };
