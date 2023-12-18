@@ -167,7 +167,7 @@ const inputHandler = () => {
         const newTag = elem.getAttribute('data-tag')
         return `<${newTag}>${inputChildren(elem.childNodes)}</${newTag}>`
       })
-      const emitContent = newContent.join('\n').replaceAll('<null>', '<p>').replaceAll('</null>', '</p>')
+      const emitContent = newContent.join('\n').replaceAll('<null></null>', '').replaceAll('<null>', '<p>').replaceAll('</null>', '</p>')
       emit('update:modelValue', emitContent)
     }
   }, 300)
